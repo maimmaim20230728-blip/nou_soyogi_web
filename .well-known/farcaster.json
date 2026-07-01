@@ -1,0 +1,21 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "脳活・そよぎ",
+    "iconUrl": "https://nou-soyogi-web.vercel.app/icons/icon-512.png",
+    "homeUrl": "https://nou-soyogi-web.vercel.app/",
+    "imageUrl": "https://nou-soyogi-web.vercel.app/icons/farcaster-embed.png",
+    "buttonTitle": "🧠 あそぶ / Play",
+    "splashImageUrl": "https://nou-soyogi-web.vercel.app/icons/icon-512.png",
+    "splashBackgroundColor": "#2E7D32",
+    "subtitle": "毎日たのしく、あたまの体操",
+    "description": "高齢者向けの、オフラインで動く無料・広告なしの脳トレ。計算・記憶・いろ・かたちの4ゲームを15言語で。",
+    "primaryCategory": "games",
+    "tags": ["brain", "seniors", "quiz", "offline", "soyogi"]
+  }
+}

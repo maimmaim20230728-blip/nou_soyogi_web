@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#2E7D32">
+<meta name="description" content="高齢者向けの、オフラインで動く無料・広告なしの脳トレアプリ。計算・記憶・いろ・かたちの4ゲームを15言語で。">
+<!-- 共有プレビュー（OGP / Twitter） -->
+<meta property="og:title" content="脳活・そよぎ">
+<meta property="og:description" content="毎日たのしく、あたまの体操。無料・広告なし・オフラインの脳トレ（15言語）">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nou-soyogi-web.vercel.app/">
+<meta property="og:image" content="https://nou-soyogi-web.vercel.app/icons/farcaster-embed.png">
+<meta name="twitter:card" content="summary_large_image">
+<!-- Farcaster Mini App 埋め込み（タイムラインで画像＋ボタン→タップで起動） -->
+<meta name="fc:miniapp" content='{"version":"1","imageUrl":"https://nou-soyogi-web.vercel.app/icons/farcaster-embed.png","button":{"title":"🧠 あそぶ / Play","action":{"type":"launch_miniapp","name":"脳活・そよぎ","url":"https://nou-soyogi-web.vercel.app/","splashImageUrl":"https://nou-soyogi-web.vercel.app/icons/icon-512.png","splashBackgroundColor":"#2E7D32"}}}' />
+<!-- 旧クライアント/バリデータ互換の fc:frame 併記（中身同一） -->
+<meta name="fc:frame" content='{"version":"1","imageUrl":"https://nou-soyogi-web.vercel.app/icons/farcaster-embed.png","button":{"title":"🧠 あそぶ / Play","action":{"type":"launch_frame","name":"脳活・そよぎ","url":"https://nou-soyogi-web.vercel.app/","splashImageUrl":"https://nou-soyogi-web.vercel.app/icons/icon-512.png","splashBackgroundColor":"#2E7D32"}}}' />
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>脳活アプリ・そよぎ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="scale-M">
+
+  <!-- ========== ホーム ========== -->
+  <section id="home" class="screen active">
+    <button id="btnGear" class="gear" aria-label="settings">⚙</button>
+    <div class="logo">脳活・そよぎ</div>
+    <div class="tagline" data-i18n="tagline">きょうも、あたまの体操。</div>
+    <button id="btnStart" class="big-btn start" data-i18n="start">今日のトレーニングを はじめる</button>
+    <div id="homeInfo" class="home-info"></div>
+    <button id="btnRecords" class="records-btn" data-i18n="records">記録を見る</button>
+    <a class="credit" id="creditLink"
+       href="https://soyogi.hp.peraichi.com/top" target="_blank" rel="noopener noreferrer"
+       data-i18n="credit">アプリ開発：介護と支援の相談どころ　そよぎ</a>
+  </section>
+
+  <!-- ========== モード選択（はじめる の後） ========== -->
+  <section id="mode" class="screen">
+    <button id="btnUsual" class="big-btn mode-usual"  data-i18n="usual">いつもの</button>
+    <button id="btnHard"  class="big-btn mode-choose" data-i18n="hard">むずかしい</button>
+    <button class="link-back" data-home data-i18n="back">ホームにもどる</button>
+  </section>
+
+  <!-- ========== ゲーム共通ステージ ========== -->
+  <section id="game" class="screen">
+    <div class="g-progress"></div>
+    <div class="g-count"></div>
+    <div class="g-instruct"></div>
+    <div class="g-body"></div>
+  </section>
+
+  <!-- ========== 結果 ========== -->
+  <section id="result" class="screen">
+    <div class="result-title" data-i18n="wellDone">よくできました！</div>
+    <div id="resultBody"></div>
+    <button class="big-btn" data-home data-i18n="back">ホームにもどる</button>
+  </section>
+
+  <!-- ========== 設定 ========== -->
+  <section id="settings" class="screen settings">
+    <h2 data-i18n="settings">せってい</h2>
+    <div class="set-label" data-i18n="language">ことば</div>
+    <div id="langGrid" class="lang-grid"></div>
+    <div class="set-label" data-i18n="textSize">もじの大きさ</div>
+    <div id="sizeRow" class="size-row">
+      <button class="size-btn" data-s="M">A</button>
+      <button class="size-btn" data-s="L">A</button>
+      <button class="size-btn" data-s="XL">A</button>
+    </div>
+    <div class="set-label" data-i18n="sound">おと</div>
+    <button id="soundBtn" class="sound-btn">🔊</button>
+    <div class="set-label" data-i18n="music">おんがく</div>
+    <button id="bgmBtn" class="sound-btn">🎵</button>
+    <button class="link-back" data-home data-i18n="back">ホームにもどる</button>
+  </section>
+
+  <!-- ========== 記録（カレンダー） ========== -->
+  <section id="records" class="screen records">
+    <div class="cal-head">
+      <button id="calPrev" class="cal-nav" aria-label="prev">◀</button>
+      <div id="calMonth" class="cal-month"></div>
+      <button id="calNext" class="cal-nav" aria-label="next">▶</button>
+    </div>
+    <div id="calWeek" class="cal-week"></div>
+    <div id="calGrid" class="cal-grid"></div>
+    <div class="cal-legend">
+      <span class="lg u"></span><span class="lg-t" data-i18n="usual">いつもの</span>
+      <span class="lg h"></span><span class="lg-t" data-i18n="hard">むずかしい</span>
+    </div>
+    <div id="dayDetail" class="day-detail"></div>
+    <button class="link-back" data-home data-i18n="back">ホームにもどる</button>
+  </section>
+
+  <!-- 正誤フィードバック -->
+  <div id="feedback"><div class="mark">○</div></div>
+
+  <!-- スクリプト（順番が大事） -->
+  <script src="data/config.js"></script>
+  <script src="data/lang.js"></script>
+  <script src="audio.js"></script>
+  <script src="store.js"></script>
+  <script src="games/calc.js"></script>
+  <script src="games/memory.js"></script>
+  <script src="games/stroop.js"></script>
+  <script src="games/silhouette.js"></script>
+  <script src="app.js"></script>
+
+  <!-- Farcaster Mini App SDK：読込完了を通知しスプラッシュを閉じる（Farcaster外/オフラインでは無害にスキップ） -->
+  <script type="module">
+    try {
+      const { sdk } = await import("https://esm.sh/@farcaster/miniapp-sdk");
+      await sdk.actions.ready();
+    } catch (e) { /* Farcaster外では何もしない */ }
+  </script>
+</body>
+</html>

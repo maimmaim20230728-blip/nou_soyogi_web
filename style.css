@@ -1,0 +1,269 @@
+/* =========================================================
+   脳活アプリ・そよぎ  ―  シニア向けデザイン
+   方針: 特大文字 / 高コントラスト / 巨大タップ領域 / 迷わせない
+   ========================================================= */
+:root{
+  --bg:#F4F1E8;         /* 目にやさしいクリーム背景 */
+  --surface:#FFFFFF;
+  --text:#1A1A1A;       /* 高コントラストの濃い文字 */
+  --brand:#2E7D32;      /* 落ち着いた緑（そよぎ） */
+  --brand-dark:#1B5E20;
+  --accent:#EF6C00;     /* 目立つオレンジ */
+  --accent-dark:#B45309;
+  --correct:#2E7D32;
+  --wrong:#C62828;
+  --tap:#E8F5E9;
+  --line:#CFC9B8;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; height:100%; }
+body{
+  font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,
+              "Noto Sans","Segoe UI",sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.4; user-select:none;
+}
+/* 文字サイズ（設定で切替） */
+body.scale-M { font-size:clamp(20px,5.2vw,30px); }
+body.scale-L { font-size:clamp(23px,6.0vw,34px); }
+body.scale-XL{ font-size:clamp(26px,6.8vw,40px); }
+
+/* ---- 画面 ---- */
+.screen{ display:none; min-height:100dvh; padding:24px 20px;
+  flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+.screen.active{ display:flex; }
+
+/* ---- 共通の巨大ボタン ---- */
+.big-btn{
+  width:100%; max-width:520px; min-height:112px;
+  font-size:1.4em; font-weight:800; color:#fff; background:var(--brand);
+  border:none; border-radius:24px; padding:18px; margin:10px 0;
+  box-shadow:0 6px 0 var(--brand-dark); cursor:pointer;
+}
+.big-btn:active{ transform:translateY(4px); box-shadow:0 2px 0 var(--brand-dark); }
+.link-back{ margin-top:28px; background:none; border:none; color:#666;
+  font-size:.9em; text-decoration:underline; cursor:pointer; }
+
+/* ========== ホーム ========== */
+.gear{ position:fixed; top:12px; right:14px; font-size:1.7em; color:#9a9a9a;
+  background:none; border:none; cursor:pointer; z-index:5; }
+.logo{ font-size:2.1em; font-weight:900; color:var(--brand-dark); margin-bottom:6px; }
+.tagline{ font-size:.9em; color:#555; margin-bottom:44px; }
+.start{ min-height:170px; font-size:1.45em; background:var(--accent);
+  box-shadow:0 8px 0 var(--accent-dark); }
+.start:active{ box-shadow:0 2px 0 var(--accent-dark); }
+.home-info{ margin-top:26px; color:#666; }
+.home-date{ font-size:1.3em; font-weight:800; color:var(--brand-dark); line-height:1.35; }
+.home-streak{ font-size:.85em; color:#666; margin-top:8px; }
+
+/* ========== モード選択 ========== */
+.mode-usual{ min-height:170px; font-size:1.5em; background:var(--accent);
+  box-shadow:0 8px 0 var(--accent-dark); }
+.mode-usual:active{ box-shadow:0 2px 0 var(--accent-dark); }
+.mode-choose{ min-height:88px; font-size:1.1em; background:var(--brand); } /* 半分の高さ */
+
+/* ========== えらぶメニュー ========== */
+.menu-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px;
+  width:100%; max-width:520px; }
+.menu-btn{ min-height:150px; min-width:0; border:4px solid var(--brand); border-radius:24px;
+  background:var(--surface); color:var(--text); font-size:1em; font-weight:800;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:8px; cursor:pointer; padding:6px; overflow-wrap:break-word; }
+.menu-btn:active{ background:var(--tap); }
+.menu-btn .mi{ font-size:2.4em; line-height:1; }
+
+/* ========== ゲーム共通ステージ ========== */
+#game{ justify-content:flex-start; padding-top:64px; }
+.g-progress{ position:fixed; top:0; left:0; height:12px; width:0;
+  background:var(--accent); transition:width .3s; z-index:6; }
+.g-count{ position:fixed; top:16px; right:18px; font-size:.85em; color:#666; z-index:6; }
+.g-instruct{ font-size:1.05em; font-weight:700; color:#444; min-height:1.4em; margin-bottom:14px; }
+.g-body{ width:100%; display:flex; flex-direction:column; align-items:center; }
+
+/* 選択肢グリッド（minmax(0,1fr)で長い単語による横はみ出しを防ぐ） */
+.grid2{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; width:100%; max-width:520px; margin:0 auto; }
+.grid3{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; width:100%; max-width:560px; margin:0 auto; }
+
+/* ① 計算 */
+.calc-q{ font-size:3em; font-weight:900; letter-spacing:2px; margin:14px 0 34px; }
+.choice{ min-height:120px; min-width:0; font-size:2.2em; font-weight:800; color:var(--text);
+  background:var(--surface); border:4px solid var(--brand); border-radius:20px; cursor:pointer; }
+.choice:active{ background:var(--tap); }
+
+/* ② 順番記憶（サイモン） */
+.pad-wrap{ margin-top:10px; }
+.pads{ display:grid; grid-template-columns:1fr 1fr; gap:16px;
+  width:min(84vw,420px); height:min(84vw,420px); }
+.pad{ border:none; border-radius:22px; cursor:pointer; opacity:.72;
+  transition:opacity .1s, transform .1s; }
+.pad.off{ cursor:default; opacity:.42; }        /* 「よく みてね」中は暗く */
+.pad.lit{ opacity:1; transform:scale(1.04); box-shadow:0 0 0 6px rgba(255,255,255,.75) inset; }
+
+/* ③ ストループ */
+.stroop-word{ font-size:clamp(2.2rem,12vw,3.6rem); font-weight:900; margin:10px 0 34px;
+  max-width:100%; overflow-wrap:break-word;
+  text-shadow:0 2px 0 rgba(255,255,255,.9),0 0 3px rgba(0,0,0,.25); } /* どの色でも読める外郭 */
+.swatch{ min-height:120px; min-width:0; font-size:1.15em; font-weight:800; color:#fff;
+  padding:6px; line-height:1.15; overflow-wrap:break-word; word-break:break-word;
+  border:4px solid rgba(0,0,0,.15); border-radius:20px; cursor:pointer; }
+.swatch:active{ filter:brightness(.92); }
+
+/* ④ シルエット */
+.sil-stage{ margin:6px 0 26px; }
+.art{ font-size:8rem; line-height:1; }
+.art.emoji{ display:inline-block; }
+.art.sil{ filter:brightness(0); }            /* 黒く塗ってシルエット化 */
+img.art{ width:8rem; height:8rem; object-fit:contain; }
+.obj-choice{ min-height:150px; min-width:0; border:4px solid var(--brand); border-radius:20px;
+  background:var(--surface); cursor:pointer; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:6px; padding:8px; }
+.obj-choice:active{ background:var(--tap); }
+.obj-choice .art{ font-size:3.4rem; }
+.obj-choice img.art{ width:3.4rem; height:3.4rem; }
+.obj-name{ font-size:.8em; font-weight:700; overflow-wrap:break-word; max-width:100%; }
+
+/* ========== 結果 ========== */
+.result-title{ font-size:1.8em; font-weight:900; color:var(--brand-dark); margin-bottom:10px; }
+.stars{ font-size:2.6em; margin:6px 0; }
+.result-total{ font-size:2.4em; font-weight:900; margin:6px 0 18px; }
+.result-list{ width:100%; max-width:420px; margin:0 auto 18px; }
+.rrow{ display:flex; justify-content:space-between; font-size:1em; font-weight:700;
+  padding:10px 6px; border-bottom:2px solid var(--line); }
+.streak{ font-size:1.1em; margin-bottom:24px; }
+
+/* ========== 設定 ========== */
+.settings{ justify-content:flex-start; padding-top:40px; }
+.settings h2{ font-size:1.5em; margin:0 0 18px; }
+.set-label{ font-size:.85em; font-weight:800; color:#555; align-self:center;
+  margin:18px 0 8px; }
+.lang-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;
+  width:100%; max-width:540px; }
+.lang-btn{ min-height:64px; border:3px solid var(--line); border-radius:14px;
+  background:var(--surface); color:var(--text); font-size:.72em; font-weight:700; cursor:pointer; }
+.lang-btn.sel{ border-color:var(--brand); background:var(--tap); }
+.size-row{ display:flex; gap:12px; align-items:flex-end; }
+.size-btn{ background:var(--surface); border:3px solid var(--line); border-radius:14px;
+  width:72px; min-height:72px; font-weight:800; cursor:pointer; color:var(--text); }
+.size-btn:nth-child(1){ font-size:1.1em; } .size-btn:nth-child(2){ font-size:1.5em; }
+.size-btn:nth-child(3){ font-size:1.9em; }
+.size-btn.sel{ border-color:var(--brand); background:var(--tap); }
+.sound-btn{ font-size:2em; width:96px; min-height:76px; border:3px solid var(--line);
+  border-radius:16px; background:var(--surface); cursor:pointer; }
+
+/* ========== 正誤フィードバック ========== */
+#feedback{ position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+  background:rgba(0,0,0,.12); z-index:50; pointer-events:none; }
+#feedback.show{ display:flex; }
+#feedback .mark{ font-size:42vw; font-weight:900; line-height:1; }
+#feedback.ok .mark{ color:var(--correct); animation:pop .3s cubic-bezier(.2,1.4,.4,1); }
+#feedback.ng .mark{ color:var(--wrong);   animation:shake .45s; }
+@keyframes pop{ 0%{ transform:scale(.3); opacity:0 } 100%{ transform:scale(1); opacity:1 } }
+@keyframes shake{ 0%,100%{transform:translateX(0)} 20%{transform:translateX(-16px)}
+  40%{transform:translateX(14px)} 60%{transform:translateX(-10px)} 80%{transform:translateX(6px)} }
+
+/* ===================== 演出（アニメーション） ===================== */
+/* 画面をふわっと表示 */
+.screen.active{ animation:screenIn .35s ease both; }
+@keyframes screenIn{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:none;} }
+
+/* ロゴが風にそよぐ（そよぎ） */
+.logo{ animation:sway 4s ease-in-out infinite; transform-origin:50% 90%; }
+@keyframes sway{ 0%,100%{ transform:rotate(-1.2deg);} 50%{ transform:rotate(1.2deg);} }
+
+/* ○の広がるリング */
+.fb-ring{ position:absolute; width:44vw; height:44vw; border-radius:50%; border:10px solid currentColor; opacity:0; }
+#feedback.ok .fb-ring{ color:var(--correct); animation:ring .7s ease-out; }
+#feedback.ng .fb-ring{ color:var(--wrong);   animation:ring .7s ease-out; }
+@keyframes ring{ 0%{ transform:scale(.3); opacity:.7;} 100%{ transform:scale(1.7); opacity:0;} }
+
+/* 正解のキラキラ（放射状に飛ぶ） */
+.sparkles{ position:absolute; width:0; height:0; }
+.sparkles span{ position:absolute; width:16px; height:16px; margin:-8px; border-radius:50%;
+  background:#FFD54F; box-shadow:0 0 8px #FFB300; animation:spark .7s ease-out forwards; }
+@keyframes spark{ 0%{ opacity:1; transform:rotate(var(--a)) translateY(0) scale(1);}
+  100%{ opacity:0; transform:rotate(var(--a)) translateY(-36vw) scale(.4);} }
+
+/* 回答ボタンの正誤ハイライト（正解=緑 / 押した誤答=赤） */
+.is-correct{ border-color:var(--correct)!important;
+  box-shadow:0 0 0 6px var(--correct),0 0 20px rgba(46,125,50,.55)!important; animation:goodPulse .5s ease; }
+.is-wrong{ border-color:var(--wrong)!important; box-shadow:0 0 0 6px var(--wrong)!important; opacity:.9; }
+@keyframes goodPulse{ 0%{transform:scale(1)} 40%{transform:scale(1.05)} 100%{transform:scale(1)} }
+
+/* 結果：星が順にポップ／合計がポップ */
+.stars span{ display:inline-block; animation:starPop .5s cubic-bezier(.2,1.6,.4,1) backwards; }
+@keyframes starPop{ 0%{ transform:scale(0) rotate(-40deg); opacity:0;} 100%{ transform:none; opacity:1;} }
+.result-total{ animation:pop .4s ease both; }
+
+/* 紙吹雪 */
+.confetti{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:40; }
+.confetti i{ position:absolute; top:-24px; width:12px; height:16px; border-radius:2px;
+  animation:fall 2.6s linear forwards; }
+@keyframes fall{ 0%{ transform:translateY(-12vh) rotate(0);} 100%{ transform:translateY(112vh) rotate(560deg);} }
+
+/* 押した手応え */
+.menu-btn:active,.obj-choice:active,.choice:active,.swatch:active{ transform:scale(.97); }
+
+/* クレジット（HPリンク・タイトル画面） */
+.credit{ display:inline-block; margin-top:22px; max-width:92%; font-size:.62em; line-height:1.5;
+  color:var(--brand-dark); text-decoration:underline; text-align:center; }
+.credit:active{ opacity:.6; }
+
+/* 「動きを減らす」設定を尊重（強い動きを止める） */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.001s!important; animation-iteration-count:1!important;
+    transition-duration:.001s!important; }
+}
+
+/* ===================== ホーム：プレイ日数・記録ボタン ===================== */
+/* プレイ日数（日）＋プレイ回数（回）を横並びで一目に */
+.home-stats{ margin-top:14px; display:flex; gap:30px; justify-content:center; }
+.stat{ display:flex; flex-direction:column; align-items:center; gap:3px; }
+.st-cap{ font-size:.72em; color:#666; }
+.st-val{ display:flex; align-items:baseline; }
+.st-val b{ font-size:1.9em; font-weight:900; color:var(--brand-dark); line-height:1; }
+.st-val i{ font-style:normal; font-size:.85em; font-weight:800; color:var(--brand-dark); margin-left:3px; }
+.records-btn{ margin-top:22px; min-height:64px; padding:12px 30px; font-size:1.05em; font-weight:800;
+  color:#fff; background:var(--brand); border:none; border-radius:18px;
+  box-shadow:0 5px 0 var(--brand-dark); cursor:pointer; }
+.records-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--brand-dark); }
+
+/* ===================== 記録（カレンダー） ===================== */
+.records{ justify-content:flex-start; padding:16px 8px 24px; }
+.cal-head{ display:flex; align-items:center; justify-content:space-between;
+  width:100%; max-width:640px; margin:0 auto 12px; }
+.cal-nav{ font-size:1.5em; width:64px; min-height:64px; border:none; color:var(--brand-dark);
+  background:var(--surface); border-radius:16px; box-shadow:0 3px 0 var(--line); cursor:pointer; }
+.cal-nav:active{ transform:translateY(2px); box-shadow:0 1px 0 var(--line); }
+.cal-month{ font-size:1.5em; font-weight:900; color:var(--brand-dark); }
+.cal-week{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); width:100%; max-width:640px; margin:0 auto; }
+.cal-wd{ text-align:center; font-size:.8em; color:#8a8a8a; padding:5px 0; }
+.cal-grid{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; width:100%; max-width:640px; margin:0 auto; }
+.cal-cell{ min-height:92px; border-radius:12px; background:var(--surface); border:2px solid transparent;
+  display:flex; flex-direction:column; align-items:center; padding-top:6px; gap:2px; }
+.cal-cell.empty{ background:transparent; }
+.cal-cell.has{ cursor:pointer; border-color:var(--line); }
+.cal-cell.has:active{ background:var(--tap); }
+.cal-cell.today{ border-color:var(--accent); border-width:3px; }
+.cal-num{ font-size:1.05em; font-weight:800; color:#444; line-height:1; }
+.cal-stars{ font-size:.66em; color:#F5B301; line-height:1; letter-spacing:-1px; min-height:.72em; }
+.cal-badges{ display:flex; gap:4px; margin-top:auto; margin-bottom:7px; flex-wrap:wrap; justify-content:center; }
+.badge{ font-size:.68em; font-weight:800; color:#fff; min-width:21px; height:21px; line-height:21px;
+  border-radius:11px; padding:0 5px; text-align:center; }
+.badge.u{ background:var(--accent); }   /* いつもの＝オレンジ */
+.badge.h{ background:var(--brand); }     /* むずかしい＝緑 */
+
+.cal-legend{ display:flex; align-items:center; justify-content:center; gap:6px; margin:14px auto 4px; font-size:.78em; color:#555; }
+.lg{ width:15px; height:15px; border-radius:8px; display:inline-block; }
+.lg.u{ background:var(--accent); } .lg.h{ background:var(--brand); }
+.lg-t{ margin-right:12px; }
+
+.day-detail{ width:100%; max-width:520px; margin:4px auto 0; }
+.dd-title{ font-size:1.1em; font-weight:800; color:var(--brand-dark); margin:10px 0 8px; text-align:center; }
+.dd-none{ text-align:center; color:#8a8a8a; padding:14px; }
+.dd-row{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:10px; }
+.dd-head{ display:flex; align-items:center; gap:10px; }
+.dd-mode{ font-size:.72em; font-weight:800; color:#fff; padding:3px 12px; border-radius:12px; }
+.dd-mode.u{ background:var(--accent); } .dd-mode.h{ background:var(--brand); }
+.dd-score{ font-size:1.15em; font-weight:900; color:var(--text); }
+.dd-stars{ margin-left:auto; font-size:1em; }
+.dd-games{ display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:8px; }
+.dd-g{ font-size:.74em; color:#555; font-weight:700; }

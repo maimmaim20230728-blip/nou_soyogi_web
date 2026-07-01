@@ -1,0 +1,17 @@
+{
+  "name": "脳活アプリ・そよぎ",
+  "short_name": "そよぎ脳活",
+  "description": "高齢者向けの、オフラインで動く無料・広告なしの脳トレアプリ",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F1E8",
+  "theme_color": "#2E7D32",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
