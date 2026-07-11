@@ -1,9 +1,9 @@
 /* Service Worker ― 完全オフライン動作（全ファイルを端末にキャッシュ） */
-const CACHE = 'soyogi-nou-v12';
+const CACHE = 'soyogi-nou-v14';
 const ASSETS = [
   './', 'index.html', 'style.css', 'app.js', 'audio.js', 'store.js',
   'data/config.js', 'data/lang.js',
-  'games/calc.js', 'games/memory.js', 'games/stroop.js', 'games/silhouette.js',
+  'games/calc.js', 'games/memory.js', 'games/stroop.js', 'games/silhouette.js', 'games/numtouch.js',
   'manifest.webmanifest',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',
 ];

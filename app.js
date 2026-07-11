@@ -67,9 +67,9 @@ function makeCtx(){
 }
 
 /* ===== ゲーム定義・進行 ===== */
-const GAMES  = { calc:CalcGame, memory:MemoryGame, stroop:StroopGame, silhouette:SilhouetteGame };
-const ROUNDS = { calc:5, memory:3, stroop:5, silhouette:5 };
-const SEQUENCE = ['calc','memory','stroop','silhouette'];
+const GAMES  = { calc:CalcGame, memory:MemoryGame, stroop:StroopGame, silhouette:SilhouetteGame, numtouch:NumTouchGame };
+const ROUNDS = { calc:5, memory:3, stroop:5, silhouette:5, numtouch:3 };
+const SEQUENCE = ['calc','memory','stroop','silhouette','numtouch'];
 
 function shuffle(a){
   a = a.slice();
@@ -117,7 +117,7 @@ function renderResult(results){
   const totalT = results.reduce((s,r)=>s+r.total,0);
   const ratio  = totalT ? totalC/totalT : 0;
   const stars  = ratio>=0.8 ? 3 : ratio>=0.5 ? 2 : 1;
-  const gname  = { calc:t('gCalc'), memory:t('gMemory'), stroop:t('gStroop'), silhouette:t('gShape') };
+  const gname  = { calc:t('gCalc'), memory:t('gMemory'), stroop:t('gStroop'), silhouette:t('gShape'), numtouch:t('gNumber') };
   const starHtml = Array.from({length:stars}, (_,i)=>
     '<span style="animation-delay:'+(i*0.22)+'s">⭐</span>').join('');
   const el = document.getElementById('resultBody');
@@ -264,7 +264,7 @@ function renderDayDetail(key){
   if(!data || !data.sessions || !data.sessions.length){
     el.innerHTML = '<div class="dd-title">'+title+'</div><div class="dd-none">'+t('noRecord')+'</div>'; return;
   }
-  const gname = { calc:t('gCalc'), memory:t('gMemory'), stroop:t('gStroop'), silhouette:t('gShape') };
+  const gname = { calc:t('gCalc'), memory:t('gMemory'), stroop:t('gStroop'), silhouette:t('gShape'), numtouch:t('gNumber') };
   let html = '<div class="dd-title">'+title+'</div>';
   data.sessions.forEach(s=>{
     const ratio = s.total ? s.correct/s.total : 0;
@@ -272,7 +272,7 @@ function renderDayDetail(key){
     const modeCls = s.mode==='hard' ? 'h' : 'u';
     const modeLbl = s.mode==='hard' ? t('hard') : t('usual');
     let per = '';
-    ['calc','memory','stroop','silhouette'].forEach(g=>{
+    ['calc','memory','stroop','silhouette','numtouch'].forEach(g=>{
       if(s.games && s.games[g]) per += '<span class="dd-g">'+gname[g]+' '+s.games[g].c+'/'+s.games[g].t+'</span>';
     });
     html += '<div class="dd-row"><div class="dd-head">'+
