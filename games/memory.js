@@ -40,7 +40,7 @@ const MemoryGame = {
       ctx.instruct(t('yourTurn'));
       setEnabled(true);
       let pos = 0, finished = false;
-      els.forEach(el => el.onclick = (e)=>{
+      els.forEach(el => Tap.bind(el, (e)=>{
         if(finished) return;
         const idx = +e.currentTarget.dataset.i;
         Sound.pad(idx); flashPad(e.currentTarget);
@@ -50,7 +50,7 @@ const MemoryGame = {
         } else {
           finished = true; setEnabled(false); Feedback.flash(false, ()=> done(false));
         }
-      });
+      }, {game:true, silent:true}));   // パッドは色ごとの音(pad)が本体＝押下tap音は鳴らさない(520Hzはドの523Hzと紛らわしく記憶の邪魔)
     })();
   }
 };

@@ -169,19 +169,20 @@ function renderSettings(){
     '<button class="lang-btn'+(l.code===CUR?' sel':'')+'" data-c="'+l.code+'">'+l.label+'</button>'
   ).join('');
   lg.querySelectorAll('.lang-btn').forEach(b=>{
-    b.onclick = ()=>{ CUR=b.dataset.c; Store.setLang(CUR); applyI18n(); renderSettings(); Sound.tap(); };
+    Tap.bind(b, ()=>{ CUR=b.dataset.c; Store.setLang(CUR); applyI18n(); renderSettings(); });
   });
   document.querySelectorAll('#sizeRow .size-btn').forEach(b=>{
     b.classList.toggle('sel', b.dataset.s===Store.getScale());
-    b.onclick = ()=>{ setScale(b.dataset.s); renderSettings(); Sound.tap(); };
+    Tap.bind(b, ()=>{ setScale(b.dataset.s); renderSettings(); });
   });
   const sb = document.getElementById('soundBtn');
   sb.textContent = Sound.enabled ? '🔊' : '🔇';
-  sb.onclick = ()=>{ Sound.toggle(); sb.textContent = Sound.enabled ? '🔊' : '🔇'; };
+  // 音ON/OFFボタンは{silent:true}＝押下音を鳴らさず、toggle内の「ON化時の確認音」に任せる（既存挙動を維持）
+  Tap.bind(sb, ()=>{ Sound.toggle(); sb.textContent = Sound.enabled ? '🔊' : '🔇'; }, { silent:true });
 
   const mb = document.getElementById('bgmBtn');
   mb.textContent = Bgm.enabled ? '🎵' : '🔇';
-  mb.onclick = ()=>{ const on = Bgm.toggle(); mb.textContent = on ? '🎵' : '🔇'; Sound.tap(); };
+  Tap.bind(mb, ()=>{ const on = Bgm.toggle(); mb.textContent = on ? '🎵' : '🔇'; });
 }
 
 /* ===== ホームの日付（大きく）・連続日数 ===== */
@@ -253,7 +254,7 @@ function renderRecords(){
       inner += '<div class="cal-badges">'+badges+'</div>';
     }
     cell.innerHTML = inner;
-    if(has) cell.onclick = ()=>{ Sound.tap(); renderDayDetail(key); };
+    if(has) Tap.bind(cell, ()=>{ renderDayDetail(key); });
     grid.appendChild(cell);
   }
 }
@@ -290,14 +291,14 @@ function init(){
   applyI18n();
   renderHome();
 
-  document.getElementById('btnStart').onclick = ()=>{ Sound.tap(); show('mode'); };
-  document.getElementById('btnUsual').onclick = ()=>{ Sound.tap(); runTraining(false); };  // いつもの＝種類ごとに順番・ふつう
-  document.getElementById('btnHard').onclick  = ()=>{ Sound.tap(); runTraining(true); };   // むずかしい＝1問ごとにランダム・高難度
-  document.getElementById('btnGear').onclick  = ()=>{ Sound.tap(); renderSettings(); show('settings'); };
-  document.getElementById('btnRecords').onclick = ()=>{ Sound.tap(); openRecords(); };
-  document.getElementById('calPrev').onclick  = ()=>{ Sound.tap(); calShift(-1); };
-  document.getElementById('calNext').onclick  = ()=>{ Sound.tap(); calShift(1); };
-  document.querySelectorAll('[data-home]').forEach(b=> b.onclick = ()=>{ Sound.tap(); renderHome(); show('home'); });
+  Tap.bind(document.getElementById('btnStart'), ()=>{ show('mode'); });
+  Tap.bind(document.getElementById('btnUsual'), ()=>{ runTraining(false); });  // いつもの＝種類ごとに順番・ふつう
+  Tap.bind(document.getElementById('btnHard'),  ()=>{ runTraining(true); });   // むずかしい＝1問ごとにランダム・高難度
+  Tap.bind(document.getElementById('btnGear'),  ()=>{ renderSettings(); show('settings'); });
+  Tap.bind(document.getElementById('btnRecords'), ()=>{ openRecords(); });
+  Tap.bind(document.getElementById('calPrev'),  ()=>{ calShift(-1); });
+  Tap.bind(document.getElementById('calNext'),  ()=>{ calShift(1); });
+  document.querySelectorAll('[data-home]').forEach(b=> Tap.bind(b, ()=>{ renderHome(); show('home'); }));
 
   show('home');
   Bgm.start();   // 起動時に自動でBGM開始（PWA/Androidは即・Webは制限で最初の操作時に自動発火）

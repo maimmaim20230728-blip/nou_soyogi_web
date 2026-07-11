@@ -37,12 +37,12 @@ const StroopGame = {
       btn.style.color = (id==='yellow') ? '#212121' : '#fff';
       btn.textContent = (I18N.colors[id] || id);
       btn.dataset.id = id;
-      btn.onclick = ()=>{
+      Tap.bind(btn, ()=>{
         if(locked) return; locked = true;
         const ok = (id === answerId);
         reveal(box.querySelector('.swatch[data-id="'+answerId+'"]'), btn);
         Feedback.flash(ok, ()=> done(ok));
-      };
+      }, {game:true});
       box.appendChild(btn);
     });
   }

@@ -21,6 +21,7 @@ body{
   font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,
               "Noto Sans","Segoe UI",sans-serif;
   background:var(--bg); color:var(--text); line-height:1.4; user-select:none;
+  -webkit-touch-callout:none;   /* iOSの長押しコールアウト（画像保存/共有メニュー）を抑止 */
 }
 /* 文字サイズ（設定で切替） */
 body.scale-M { font-size:clamp(20px,5.2vw,30px); }
@@ -39,7 +40,7 @@ body.scale-XL{ font-size:clamp(26px,6.8vw,40px); }
   border:none; border-radius:24px; padding:18px; margin:10px 0;
   box-shadow:0 6px 0 var(--brand-dark); cursor:pointer;
 }
-.big-btn:active{ transform:translateY(4px); box-shadow:0 2px 0 var(--brand-dark); }
+.big-btn:active,.big-btn.pressing{ transform:translateY(4px); box-shadow:0 2px 0 var(--brand-dark); }
 .link-back{ margin-top:28px; background:none; border:none; color:#666;
   font-size:.9em; text-decoration:underline; cursor:pointer; }
 
@@ -50,7 +51,7 @@ body.scale-XL{ font-size:clamp(26px,6.8vw,40px); }
 .tagline{ font-size:.9em; color:#555; margin-bottom:44px; }
 .start{ min-height:170px; font-size:1.45em; background:var(--accent);
   box-shadow:0 8px 0 var(--accent-dark); }
-.start:active{ box-shadow:0 2px 0 var(--accent-dark); }
+.start:active,.start.pressing{ box-shadow:0 2px 0 var(--accent-dark); }
 .home-info{ margin-top:26px; color:#666; }
 .home-date{ font-size:1.3em; font-weight:800; color:var(--brand-dark); line-height:1.35; }
 .home-streak{ font-size:.85em; color:#666; margin-top:8px; }
@@ -58,7 +59,7 @@ body.scale-XL{ font-size:clamp(26px,6.8vw,40px); }
 /* ========== モード選択 ========== */
 .mode-usual{ min-height:170px; font-size:1.5em; background:var(--accent);
   box-shadow:0 8px 0 var(--accent-dark); }
-.mode-usual:active{ box-shadow:0 2px 0 var(--accent-dark); }
+.mode-usual:active,.mode-usual.pressing{ box-shadow:0 2px 0 var(--accent-dark); }
 .mode-choose{ min-height:88px; font-size:1.1em; background:var(--brand); } /* 半分の高さ */
 
 /* ========== えらぶメニュー ========== */
@@ -68,7 +69,7 @@ body.scale-XL{ font-size:clamp(26px,6.8vw,40px); }
   background:var(--surface); color:var(--text); font-size:1em; font-weight:800;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:8px; cursor:pointer; padding:6px; overflow-wrap:break-word; }
-.menu-btn:active{ background:var(--tap); }
+.menu-btn:active,.menu-btn.pressing{ background:var(--tap); }
 .menu-btn .mi{ font-size:2.4em; line-height:1; }
 
 /* ========== ゲーム共通ステージ ========== */
@@ -87,7 +88,7 @@ body.scale-XL{ font-size:clamp(26px,6.8vw,40px); }
 .calc-q{ font-size:3em; font-weight:900; letter-spacing:2px; margin:14px 0 34px; }
 .choice{ min-height:120px; min-width:0; font-size:2.2em; font-weight:800; color:var(--text);
   background:var(--surface); border:4px solid var(--brand); border-radius:20px; cursor:pointer; }
-.choice:active{ background:var(--tap); }
+.choice:active,.choice.pressing{ background:var(--tap); }
 
 /* ② 順番記憶（サイモン） */
 .pad-wrap{ margin-top:10px; }
@@ -105,7 +106,7 @@ body.scale-XL{ font-size:clamp(26px,6.8vw,40px); }
 .swatch{ min-height:120px; min-width:0; font-size:1.15em; font-weight:800; color:#fff;
   padding:6px; line-height:1.15; overflow-wrap:break-word; word-break:break-word;
   border:4px solid rgba(0,0,0,.15); border-radius:20px; cursor:pointer; }
-.swatch:active{ filter:brightness(.92); }
+.swatch:active,.swatch.pressing{ filter:brightness(.92); }
 
 /* ④ シルエット */
 .sil-stage{ margin:6px 0 26px; }
@@ -116,7 +117,7 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 .obj-choice{ min-height:150px; min-width:0; border:4px solid var(--brand); border-radius:20px;
   background:var(--surface); cursor:pointer; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:6px; padding:8px; }
-.obj-choice:active{ background:var(--tap); }
+.obj-choice:active,.obj-choice.pressing{ background:var(--tap); }
 .obj-choice .art{ font-size:3.4rem; }
 .obj-choice img.art{ width:3.4rem; height:3.4rem; }
 .obj-name{ font-size:.8em; font-weight:700; overflow-wrap:break-word; max-width:100%; }
@@ -200,12 +201,12 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 @keyframes fall{ 0%{ transform:translateY(-12vh) rotate(0);} 100%{ transform:translateY(112vh) rotate(560deg);} }
 
 /* 押した手応え */
-.menu-btn:active,.obj-choice:active,.choice:active,.swatch:active{ transform:scale(.97); }
+.menu-btn:active,.menu-btn.pressing,.obj-choice:active,.obj-choice.pressing,.choice:active,.choice.pressing,.swatch:active,.swatch.pressing{ transform:scale(.97); }
 
 /* クレジット（HPリンク・タイトル画面） */
 .credit{ display:inline-block; margin-top:22px; max-width:92%; font-size:.62em; line-height:1.5;
   color:var(--brand-dark); text-decoration:underline; text-align:center; }
-.credit:active{ opacity:.6; }
+.credit:active,.credit.pressing{ opacity:.6; }
 
 /* 「動きを減らす」設定を尊重（強い動きを止める） */
 @media (prefers-reduced-motion: reduce){
@@ -224,7 +225,7 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 .records-btn{ margin-top:22px; min-height:64px; padding:12px 30px; font-size:1.05em; font-weight:800;
   color:#fff; background:var(--brand); border:none; border-radius:18px;
   box-shadow:0 5px 0 var(--brand-dark); cursor:pointer; }
-.records-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--brand-dark); }
+.records-btn:active,.records-btn.pressing{ transform:translateY(3px); box-shadow:0 2px 0 var(--brand-dark); }
 
 /* ===================== 記録（カレンダー） ===================== */
 .records{ justify-content:flex-start; padding:16px 8px 24px; }
@@ -232,7 +233,7 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
   width:100%; max-width:640px; margin:0 auto 12px; }
 .cal-nav{ font-size:1.5em; width:64px; min-height:64px; border:none; color:var(--brand-dark);
   background:var(--surface); border-radius:16px; box-shadow:0 3px 0 var(--line); cursor:pointer; }
-.cal-nav:active{ transform:translateY(2px); box-shadow:0 1px 0 var(--line); }
+.cal-nav:active,.cal-nav.pressing{ transform:translateY(2px); box-shadow:0 1px 0 var(--line); }
 .cal-month{ font-size:1.5em; font-weight:900; color:var(--brand-dark); }
 .cal-week{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); width:100%; max-width:640px; margin:0 auto; }
 .cal-wd{ text-align:center; font-size:.8em; color:#8a8a8a; padding:5px 0; }
@@ -241,7 +242,7 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
   display:flex; flex-direction:column; align-items:center; padding-top:6px; gap:2px; }
 .cal-cell.empty{ background:transparent; }
 .cal-cell.has{ cursor:pointer; border-color:var(--line); }
-.cal-cell.has:active{ background:var(--tap); }
+.cal-cell.has:active,.cal-cell.has.pressing{ background:var(--tap); }
 .cal-cell.today{ border-color:var(--accent); border-width:3px; }
 .cal-num{ font-size:1.05em; font-weight:800; color:#444; line-height:1; }
 .cal-stars{ font-size:.66em; color:#F5B301; line-height:1; letter-spacing:-1px; min-height:.72em; }
@@ -280,7 +281,7 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
   border:4px solid var(--brand); background:var(--surface); color:var(--text);
   font-size:2.2em; font-weight:900; line-height:1; cursor:pointer;
   display:flex; align-items:center; justify-content:center; box-shadow:0 4px 0 var(--line); }
-.num-btn:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--line); }
+.num-btn:active,.num-btn.pressing{ transform:translateY(2px); box-shadow:0 2px 0 var(--line); }
 .num-btn.done{ background:var(--correct); color:#fff; border-color:var(--correct);
   box-shadow:none; transform:none; }              /* 正しい順＝緑にして無効化 */
 .num-btn.wrong{ animation:numWrong .4s; }         /* 間違い＝赤くフラッシュ＋ゆれ */

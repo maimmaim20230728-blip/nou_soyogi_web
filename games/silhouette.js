@@ -35,12 +35,12 @@ const SilhouetteGame = {
       btn.innerHTML = art(obj, false) +
         '<span class="obj-name">'+(I18N.objects[id] || id)+'</span>';
       btn.dataset.id = id;
-      btn.onclick = ()=>{
+      Tap.bind(btn, ()=>{
         if(locked) return; locked = true;
         const ok = (id === answerId);
         reveal(box.querySelector('.obj-choice[data-id="'+answerId+'"]'), btn);
         Feedback.flash(ok, ()=> done(ok));
-      };
+      }, {game:true});
       box.appendChild(btn);
     });
   }

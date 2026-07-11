@@ -80,13 +80,13 @@ const CalcGame = {
       const btn = document.createElement('button');
       btn.className = 'choice';
       btn.textContent = n;
-      btn.onclick = ()=>{
+      Tap.bind(btn, ()=>{
         if(locked) return; locked = true;
         const ok = (n === answer);
         const correctEl = [...box.querySelectorAll('.choice')].find(b=>b.textContent==String(answer));
         reveal(correctEl, btn);
         Feedback.flash(ok, ()=> done(ok));
-      };
+      }, {game:true});
       box.appendChild(btn);
     });
   }

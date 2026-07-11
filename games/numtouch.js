@@ -46,7 +46,7 @@ const NumTouchGame = {
       b.style.top  = Math.round(top)+'px';
       b.style.width  = size+'px';
       b.style.height = size+'px';
-      b.onclick = ()=>{
+      Tap.bind(b, ()=>{
         if(b.disabled) return;
         if(num === nextNum){                 // 正しい順にタップ
           b.disabled = true; b.classList.add('done');
@@ -64,7 +64,7 @@ const NumTouchGame = {
           b.classList.add('wrong');
           setTimeout(()=>{ b.classList.remove('wrong'); }, 400);
         }
-      };
+      }, {game:true});
       stage.appendChild(b);
     }
   }

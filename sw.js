@@ -1,7 +1,7 @@
 /* Service Worker ― 完全オフライン動作（全ファイルを端末にキャッシュ） */
-const CACHE = 'soyogi-nou-v14';
+const CACHE = 'soyogi-nou-v15';
 const ASSETS = [
-  './', 'index.html', 'style.css', 'app.js', 'audio.js', 'store.js',
+  './', 'index.html', 'style.css', 'app.js', 'audio.js', 'store.js', 'tap.js',
   'data/config.js', 'data/lang.js',
   'games/calc.js', 'games/memory.js', 'games/stroop.js', 'games/silhouette.js', 'games/numtouch.js',
   'manifest.webmanifest',
