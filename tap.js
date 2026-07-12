@@ -23,7 +23,9 @@ const Tap = (() => {
       if(!e.isPrimary) return;
       pid = e.pointerId; sx = e.clientX; sy = e.clientY;
       el.classList.add('pressing');
-      try{ el.setPointerCapture(pid); }catch(_){}
+      // 🔴 setPointerCapture は使わない: iOS Safari ではタッチpointerを捕捉すると
+      //    その後の pointerup がこの要素に届かなくなり（pointercancel化）、
+      //    「音は鳴るのに反応しない（画面が変わらない）」不具合になる（Androidらくらくでは正常）。
       if(!o.silent) Sound.tap();          // 押した瞬間の手応え音
     });
     el.addEventListener('pointerup', e=>{

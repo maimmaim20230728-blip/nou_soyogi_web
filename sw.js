@@ -1,5 +1,5 @@
 /* Service Worker ― 完全オフライン動作（全ファイルを端末にキャッシュ） */
-const CACHE = 'soyogi-nou-v15';
+const CACHE = 'soyogi-nou-v16';
 const ASSETS = [
   './', 'index.html', 'style.css', 'app.js', 'audio.js', 'store.js', 'tap.js',
   'data/config.js', 'data/lang.js',
