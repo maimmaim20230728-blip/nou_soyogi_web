@@ -332,3 +332,43 @@ Object.keys(LANG).forEach(k=>{
   LANG[k].ui.daysUnit  = DAYS_U[k]  || '';
   LANG[k].ui.timesUnit = TIMES_U[k] || '';
 });
+
+/* ---- 追加UI（もういちど／やめる／中断確認／つづける／もういちど みる／ミス通知）15言語 ---- */
+const AGAIN = {
+  ja:'もういちど やる', en:'Play again', zh:'再玩一次', 'zh-TW':'再玩一次', ko:'다시 하기',
+  es:'Jugar otra vez', pt:'Jogar de novo', fr:'Rejouer', de:'Noch einmal', it:'Gioca ancora',
+  nl:'Nog een keer', pl:'Zagraj ponownie', ru:'Ещё раз', tr:'Tekrar oyna', hi:'फिर से खेलें',
+};
+const QUIT_ = {
+  ja:'やめる', en:'Stop', zh:'退出', 'zh-TW':'退出', ko:'그만하기',
+  es:'Salir', pt:'Sair', fr:'Arrêter', de:'Beenden', it:'Esci',
+  nl:'Stoppen', pl:'Zakończ', ru:'Выйти', tr:'Çık', hi:'बंद करें',
+};
+const QUITASK = {
+  ja:'とちゅうで やめますか？', en:'Stop here?', zh:'要中途退出吗？', 'zh-TW':'要中途退出嗎？', ko:'여기서 그만할까요?',
+  es:'¿Salir ahora?', pt:'Sair agora?', fr:'Arrêter ici ?', de:'Jetzt beenden?', it:'Vuoi uscire?',
+  nl:'Nu stoppen?', pl:'Zakończyć teraz?', ru:'Закончить сейчас?', tr:'Şimdi bitirelim mi?', hi:'अभी बंद करें?',
+};
+const KEEPON = {
+  ja:'つづける', en:'Keep going', zh:'继续', 'zh-TW':'繼續', ko:'계속하기',
+  es:'Seguir', pt:'Continuar', fr:'Continuer', de:'Weiter', it:'Continua',
+  nl:'Doorgaan', pl:'Kontynuuj', ru:'Продолжить', tr:'Devam et', hi:'जारी रखें',
+};
+const WATCHAGAIN = {
+  ja:'もういちど みる', en:'Watch again', zh:'再看一次', 'zh-TW':'再看一次', ko:'다시 보기',
+  es:'Ver otra vez', pt:'Ver de novo', fr:'Revoir', de:'Nochmal ansehen', it:'Rivedi',
+  nl:'Nog eens kijken', pl:'Zobacz ponownie', ru:'Посмотреть ещё раз', tr:'Tekrar izle', hi:'फिर से देखें',
+};
+const OOPS = {
+  ja:'あっ、ちがう。1から じゅんばんに', en:'Oops! Tap 1, 2, 3… in order', zh:'哎呀，不对。要按顺序点哦', 'zh-TW':'哎呀，不對。要按順序點喔', ko:'앗, 아니에요. 1부터 순서대로!',
+  es:'¡Uy! En orden desde el 1', pt:'Ops! Em ordem, do 1', fr:'Oups ! Dans l\'ordre, depuis 1', de:'Hoppla! Der Reihe nach ab 1', it:'Ops! In ordine, dal 1',
+  nl:'Oeps! Op volgorde vanaf 1', pl:'Ojej! Po kolei od 1', ru:'Ой! По порядку с 1', tr:'Hop! 1\'den sırayla', hi:'अरे! 1 से क्रम में',
+};
+Object.keys(LANG).forEach(k=>{
+  LANG[k].ui.again      = AGAIN[k];
+  LANG[k].ui.quit       = QUIT_[k];
+  LANG[k].ui.quitAsk    = QUITASK[k];
+  LANG[k].ui.keepOn     = KEEPON[k];
+  LANG[k].ui.watchAgain = WATCHAGAIN[k];
+  LANG[k].ui.oops       = OOPS[k];
+});

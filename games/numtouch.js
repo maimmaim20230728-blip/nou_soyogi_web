@@ -32,6 +32,14 @@ const NumTouchGame = {
 
     let nextNum = 1, miss = 0, cleared = 0;
 
+    // ミス時に指示文を一時的に「あっ、ちがう…」へ差し替えて戻す（連続ミスでも多重にならないよう1本のタイマーで管理）
+    let oopsTimer = null;
+    function showOops(){
+      clearTimeout(oopsTimer);
+      ctx.instruct(t('oops'));
+      oopsTimer = setTimeout(()=>{ ctx.instruct(t('tapNumber')); }, 1200);
+    }
+
     for(let num=1; num<=n; num++){
       const cell = chosen[num-1];
       const col = cell % cols, row = Math.floor(cell / cols);
@@ -52,6 +60,7 @@ const NumTouchGame = {
           b.disabled = true; b.classList.add('done');
           nextNum++; cleared++;
           if(cleared === n){                 // 全部そろった＝ラウンド終了
+            clearTimeout(oopsTimer);         // 保留中の指示文戻しが次ゲームに残らないよう破棄
             const ok = (miss === 0);         // ミス0なら正解・1以上なら不正解
             Feedback.flash(ok, ()=> done(ok));
           } else {
@@ -60,6 +69,7 @@ const NumTouchGame = {
         } else {                             // 順番ちがい＝ミスとして記録し続行
           miss++;
           Sound.ng();
+          showOops();                        // 「あっ、ちがう。1から じゅんばんに」を約1.2秒表示（B-6）
           b.classList.remove('wrong'); void b.offsetWidth;   // アニメを再発火させる
           b.classList.add('wrong');
           setTimeout(()=>{ b.classList.remove('wrong'); }, 400);

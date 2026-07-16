@@ -45,7 +45,8 @@ const Feedback = {
     fb.innerHTML = html;
     fb.className = 'show ' + (ok ? 'ok' : 'ng');
     ok ? Sound.ok() : Sound.ng();
-    setTimeout(()=>{ fb.className = ''; if(cb) cb(); }, 1000);
+    // 正解は1.0秒。誤答は「まちがい」をしっかり見て気づけるよう1.8秒（シニアがゆっくり確認できる長さ）
+    setTimeout(()=>{ fb.className = ''; if(cb) cb(); }, ok ? 1000 : 1800);
   }
 };
 
@@ -55,14 +56,20 @@ function reveal(correctEl, tappedEl){
   if(tappedEl && tappedEl !== correctEl) tappedEl.classList.add('is-wrong');
 }
 
-/* ===== ゲームに渡す描画コンテキスト ===== */
-function makeCtx(){
+/* ===== ゲームに渡す描画コンテキスト =====
+   gen … この描画コンテキストが属するトレーニング世代。中断(やめる)や再開でtrainSessionが
+        進むと alive() が false になり、DOM書き込み系(instruct/progress/count)は無視する。
+        これにより、旧セッションのゲーム内部の非同期(記憶ゲームの提示ループ等)が完了時に
+        共有DOM(#game .g-instruct)を書き換えて新セッションを汚すのを防ぐ。 */
+function makeCtx(gen){
   const g = document.getElementById('game');
+  const alive = () => gen === trainSession;
   return {
     body: g.querySelector('.g-body'),
-    instruct(txt){ g.querySelector('.g-instruct').textContent = txt || ''; },
-    progress(pct){ g.querySelector('.g-progress').style.width = pct + '%'; },
-    count(txt){ g.querySelector('.g-count').textContent = txt || ''; },
+    alive,
+    instruct(txt){ if(!alive()) return; g.querySelector('.g-instruct').textContent = txt || ''; },
+    progress(pct){ if(!alive()) return; g.querySelector('.g-progress').style.width = pct + '%'; },
+    count(txt){ if(!alive()) return; g.querySelector('.g-count').textContent = txt || ''; },
   };
 }
 
@@ -77,7 +84,12 @@ function shuffle(a){
   return a;
 }
 
+let lastHard = false;      // 直前に遊んだ難易度（結果画面の「もういちど」で再開するため保持）
+let trainSession = 0;      // トレーニング実行の世代トークン（やめる/再開で古い実行のコールバックを無効化）
+
 function runTraining(hard){
+  lastHard = hard;
+  const my = ++trainSession;               // この実行の世代（保留中の古いコールバックはこれで弾く）
   // 出題リストを作る：各ゲームの問題数ぶんのIDを並べる
   const results = {};
   SEQUENCE.forEach(id => results[id] = { game:id, correct:0, total:0 });
@@ -87,10 +99,11 @@ function runTraining(hard){
   const total = list.length;
 
   const memCount = { n:0 };                // 記憶ゲームは出るたび長さ +1
-  const ctx = makeCtx();
+  const ctx = makeCtx(my);                 // この世代のctx（中断後はctx.alive()がfalse＝DOM書き込みを無視）
   show('game');
   let i = 0;
   (function step(){
+    if(my !== trainSession) return;        // やめる等で世代が変わったら以降の進行を止める
     if(i >= total){ finishTraining(SEQUENCE.map(id=>results[id]), hard); return; }
     const id = list[i];
     ctx.body.innerHTML = ''; ctx.instruct('');
@@ -99,10 +112,21 @@ function runTraining(hard){
     const opts = { hard };
     if(id === 'memory'){ memCount.n++; opts.seqLen = (hard?3:2) + memCount.n; }
     GAMES[id].round(ctx, opts, (ok)=>{
+      if(my !== trainSession) return;      // 破棄されたセッションのゲーム完了コールバックは無視（記録もしない）
       results[id].total++; if(ok) results[id].correct++;
       i++; step();
     });
   })();
+}
+
+/* ===== トレーニング中断（やめる） ===== */
+function showQuitConfirm(){ document.getElementById('quitConfirm').hidden = false; }
+function hideQuitConfirm(){ document.getElementById('quitConfirm').hidden = true; }
+function quitTraining(){
+  trainSession++;         // 実行中セッションを無効化＝保留中のstep/ゲーム完了コールバックが進まない（途中結果は記録されない）
+  hideQuitConfirm();
+  renderHome();
+  show('home');
 }
 
 function finishTraining(results, hard){
@@ -163,26 +187,40 @@ function setScale(s){
   document.body.classList.remove('scale-M','scale-L','scale-XL');
   document.body.classList.add('scale-'+s);
 }
+/* 設定画面の「静的ボタン」(大きさ・おと・おんがく)は初期化時に一度だけバインドする。
+   ・これらは常にHTMLに存在する固定要素。renderSettingsは開くたび走るので、そこで毎回
+     Tap.bindすると tap.js に解除機構が無くリスナーが二重三重に蓄積する（音トグルが
+     押すたび複数回発火する不具合の原因）。「バインドは一度きり／状態反映は毎回」に分離する。 */
+function bindSettingsStatic(){
+  document.querySelectorAll('#sizeRow .size-btn').forEach(b=>{
+    Tap.bind(b, ()=>{ setScale(b.dataset.s); reflectSettings(); });
+  });
+  const sb = document.getElementById('soundBtn');
+  // 音ON/OFFボタンは{silent:true}＝押下音を鳴らさず、toggle内の「ON化時の確認音」に任せる（既存挙動を維持）
+  Tap.bind(sb, ()=>{ Sound.toggle(); reflectSettings(); }, { silent:true });
+  const mb = document.getElementById('bgmBtn');
+  Tap.bind(mb, ()=>{ Bgm.toggle(); reflectSettings(); });
+}
+
+/* 設定画面の状態反映のみ（大きさの選択・音/BGMのアイコン）。バインドはしない＝何度呼んでも安全 */
+function reflectSettings(){
+  document.querySelectorAll('#sizeRow .size-btn').forEach(b=>{
+    b.classList.toggle('sel', b.dataset.s===Store.getScale());
+  });
+  document.getElementById('soundBtn').textContent = Sound.enabled ? '🔊' : '🔇';
+  document.getElementById('bgmBtn').textContent   = Bgm.enabled ? '🎵' : '🔇';
+}
+
 function renderSettings(){
   const lg = document.getElementById('langGrid');
   lg.innerHTML = LANGS.map(l=>
     '<button class="lang-btn'+(l.code===CUR?' sel':'')+'" data-c="'+l.code+'">'+l.label+'</button>'
   ).join('');
+  // 言語ボタンは毎回innerHTMLで作り直す＝古い要素はリスナーごと破棄されるので、都度bindしても蓄積しない
   lg.querySelectorAll('.lang-btn').forEach(b=>{
     Tap.bind(b, ()=>{ CUR=b.dataset.c; Store.setLang(CUR); applyI18n(); renderSettings(); });
   });
-  document.querySelectorAll('#sizeRow .size-btn').forEach(b=>{
-    b.classList.toggle('sel', b.dataset.s===Store.getScale());
-    Tap.bind(b, ()=>{ setScale(b.dataset.s); renderSettings(); });
-  });
-  const sb = document.getElementById('soundBtn');
-  sb.textContent = Sound.enabled ? '🔊' : '🔇';
-  // 音ON/OFFボタンは{silent:true}＝押下音を鳴らさず、toggle内の「ON化時の確認音」に任せる（既存挙動を維持）
-  Tap.bind(sb, ()=>{ Sound.toggle(); sb.textContent = Sound.enabled ? '🔊' : '🔇'; }, { silent:true });
-
-  const mb = document.getElementById('bgmBtn');
-  mb.textContent = Bgm.enabled ? '🎵' : '🔇';
-  Tap.bind(mb, ()=>{ const on = Bgm.toggle(); mb.textContent = on ? '🎵' : '🔇'; });
+  reflectSettings();
 }
 
 /* ===== ホームの日付（大きく）・連続日数 ===== */
@@ -194,6 +232,11 @@ function renderHome(){
       { year:'numeric', month:'long', day:'numeric', weekday:'long' });
   }catch(e){ dateStr = d.toLocaleDateString(); }
   const du = I18N.ui.daysUnit || '', tu = I18N.ui.timesUnit || '';
+  const streak = Store.displayStreak();
+  // 連続0日のときは行ごと出さない（🔥 0 を見せない）。単位(日/天/일)がある言語だけ付ける
+  const streakHtml = streak > 0
+    ? '<div class="home-streak">🔥 '+streak+du+'</div>'
+    : '';
   document.getElementById('homeInfo').innerHTML =
     '<div class="home-date">'+dateStr+'</div>' +
     '<div class="home-stats">' +
@@ -201,7 +244,8 @@ function renderHome(){
         '<span class="st-val"><b>'+Store.totalDays()+'</b>'+(du?'<i>'+du+'</i>':'')+'</span></div>' +
       '<div class="stat"><span class="st-cap">'+t('playCount')+'</span>' +
         '<span class="st-val"><b>'+Store.totalPlays()+'</b>'+(tu?'<i>'+tu+'</i>':'')+'</span></div>' +
-    '</div>';
+    '</div>' +
+    streakHtml;
 }
 
 /* ===== 記録（カレンダー） ===== */
@@ -272,11 +316,18 @@ function renderDayDetail(key){
     const stars = ratio>=0.8 ? 3 : ratio>=0.5 ? 2 : 1;
     const modeCls = s.mode==='hard' ? 'h' : 'u';
     const modeLbl = s.mode==='hard' ? t('hard') : t('usual');
+    // プレイした時刻（時:分）。旧データで at が無い場合はガードして出さない
+    let timeStr = '';
+    if(s.at){
+      try{ timeStr = new Date(s.at).toLocaleTimeString(CUR || undefined, { hour:'2-digit', minute:'2-digit' }); }
+      catch(e){ timeStr = ''; }
+    }
     let per = '';
     ['calc','memory','stroop','silhouette','numtouch'].forEach(g=>{
       if(s.games && s.games[g]) per += '<span class="dd-g">'+gname[g]+' '+s.games[g].c+'/'+s.games[g].t+'</span>';
     });
     html += '<div class="dd-row"><div class="dd-head">'+
+      (timeStr ? '<span class="dd-time">'+timeStr+'</span>' : '')+
       '<span class="dd-mode '+modeCls+'">'+modeLbl+'</span>'+
       '<span class="dd-score">'+s.correct+' / '+s.total+'</span>'+
       '<span class="dd-stars">'+'⭐'.repeat(stars)+'</span></div>'+
@@ -291,6 +342,8 @@ function init(){
   applyI18n();
   renderHome();
 
+  bindSettingsStatic();   // 設定の固定ボタン(大きさ・おと・おんがく)は起動時に一度だけバインド（A-1）
+
   Tap.bind(document.getElementById('btnStart'), ()=>{ show('mode'); });
   Tap.bind(document.getElementById('btnUsual'), ()=>{ runTraining(false); });  // いつもの＝種類ごとに順番・ふつう
   Tap.bind(document.getElementById('btnHard'),  ()=>{ runTraining(true); });   // むずかしい＝1問ごとにランダム・高難度
@@ -298,6 +351,11 @@ function init(){
   Tap.bind(document.getElementById('btnRecords'), ()=>{ openRecords(); });
   Tap.bind(document.getElementById('calPrev'),  ()=>{ calShift(-1); });
   Tap.bind(document.getElementById('calNext'),  ()=>{ calShift(1); });
+  Tap.bind(document.getElementById('btnAgain'), ()=>{ runTraining(lastHard); });   // 結果画面「もういちど」＝同じ難易度でもう一度（B-1）
+  // トレーニング中断「やめる」：ゲーム画面のボタン→確認オーバーレイ→やめる/つづける（B-5）
+  Tap.bind(document.getElementById('btnQuit'), ()=>{ showQuitConfirm(); });
+  Tap.bind(document.getElementById('quitYes'), ()=>{ quitTraining(); });
+  Tap.bind(document.getElementById('quitNo'),  ()=>{ hideQuitConfirm(); });
   document.querySelectorAll('[data-home]').forEach(b=> Tap.bind(b, ()=>{ renderHome(); show('home'); }));
 
   show('home');

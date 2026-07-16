@@ -289,3 +289,37 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
   0%,100%{ background:var(--surface); color:var(--text); transform:translateX(0); }
   20%{ background:var(--wrong); color:#fff; transform:translateX(-6px); }
   60%{ background:var(--wrong); color:#fff; transform:translateX(6px); } }
+
+/* ===================== ② 記憶ゲームのヒント「もういちど みる」 ===================== */
+/* 入力中に1回だけ出る小さめボタン（pad-wrap内・パッドの下に中央寄せ） */
+.mem-again{ display:block; margin:18px auto 0; font-size:.8em; font-weight:800; color:var(--brand-dark);
+  background:var(--surface); border:3px solid var(--brand); border-radius:16px;
+  padding:12px 22px; min-height:56px; cursor:pointer; }
+.mem-again:active,.mem-again.pressing{ background:var(--tap); }
+.mem-again[hidden]{ display:none; }
+
+/* ===================== トレーニング中断「やめる」 ===================== */
+/* ゲーム画面の左上に控えめに置く（右上のカウント表示と重ならない位置・小さめで誤タップ回避） */
+.quit-x{ position:fixed; top:14px; left:14px; z-index:7;
+  font-size:.7em; font-weight:800; color:#8a8a8a;
+  background:var(--surface); border:2px solid var(--line); border-radius:12px;
+  padding:6px 14px; min-height:40px; cursor:pointer; }
+.quit-x:active,.quit-x.pressing{ background:var(--tap); }
+
+/* 中断の確認オーバーレイ（画面中央にカード） */
+.quit-confirm{ position:fixed; inset:0; z-index:60;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,.42); padding:24px; }
+.quit-confirm[hidden]{ display:none; }             /* .quit-confirmのdisplay:flexより優先させ、hidden属性を尊重 */
+.quit-box{ background:var(--surface); border-radius:24px; padding:28px 24px;
+  width:100%; max-width:420px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,.25); }
+.quit-ask{ font-size:1.2em; font-weight:800; color:var(--text); margin-bottom:22px; line-height:1.4; }
+.quit-actions{ display:flex; flex-direction:column; gap:14px; }
+.quit-btn{ min-height:80px; font-size:1.15em; font-weight:800; color:#fff;
+  border:none; border-radius:18px; cursor:pointer; }
+.quit-btn.yes{ background:var(--wrong); box-shadow:0 5px 0 #8E1D1D; }            /* やめる＝赤（取り消せる操作） */
+.quit-btn.no{ background:var(--brand); box-shadow:0 5px 0 var(--brand-dark); }  /* つづける＝緑（安全側） */
+.quit-btn:active,.quit-btn.pressing{ transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.3); }
+
+/* ===================== 記録：日別詳細の時刻 ===================== */
+.dd-time{ font-size:.72em; font-weight:700; color:#8a8a8a; }

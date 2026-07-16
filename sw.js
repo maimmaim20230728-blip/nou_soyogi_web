@@ -1,5 +1,5 @@
 /* Service Worker ― 完全オフライン動作（全ファイルを端末にキャッシュ） */
-const CACHE = 'soyogi-nou-v16';
+const CACHE = 'soyogi-nou-v17';
 const ASSETS = [
   './', 'index.html', 'style.css', 'app.js', 'audio.js', 'store.js', 'tap.js',
   'data/config.js', 'data/lang.js',
@@ -27,6 +27,10 @@ self.addEventListener('fetch', e=>{
       const copy = res.clone();
       caches.open(CACHE).then(c=>c.put(e.request, copy)).catch(()=>{});
       return res;
-    }).catch(()=> hit))
+    }).catch(()=>{
+      // オフラインでネットにも出られない時：画面遷移(ナビゲーション)ならキャッシュのindex.htmlで復帰
+      if(e.request.mode === 'navigate') return caches.match('index.html');
+      // それ以外は何も返さない（従来と同じ＝そのファイルは取得失敗）
+    }))
   );
 });

@@ -75,13 +75,24 @@ const Store = (() => {
       return n;
     },
 
-    /* 連続日数（今日から遡って途切れるまで） */
+    /* 連続日数（今日から遡って途切れるまで）＝結果画面用（プレイ直後に呼ぶので今日起点でよい） */
     streak(){
       const all = load();
       let n = 0; const d = new Date();
       while(true){
         if(all[keyOf(d)]){ n++; d.setDate(d.getDate()-1); } else break;
       }
+      return n;
+    },
+
+    /* 表示用の連続日数（ホーム用）＝今日まだプレイしていなければ昨日を起点に遡って数える。
+       今日未プレイでも「連続が途切れて0」に見えないようにする（streak()はそのまま結果画面用に残す） */
+    displayStreak(){
+      const all = load();
+      const d = new Date();
+      if(!all[keyOf(d)]) d.setDate(d.getDate()-1);   // 今日の記録が無ければ昨日から数え始める
+      let n = 0;
+      while(all[keyOf(d)]){ n++; d.setDate(d.getDate()-1); }
       return n;
     },
 

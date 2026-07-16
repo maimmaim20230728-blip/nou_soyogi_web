@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2E7D32">
-<meta name="description" content="高齢者向けの、オフラインで動く無料・広告なしの脳トレアプリ。計算・記憶・いろ・かたちの4ゲームを15言語で。">
+<meta name="description" content="高齢者向けの、オフラインで動く無料・広告なしの脳トレアプリ。計算・記憶・いろ・かたち・かずタッチの5ゲームを15言語で。">
 <!-- 共有プレビュー（OGP / Twitter） -->
 <meta property="og:title" content="脳活・そよぎ">
 <meta property="og:description" content="毎日たのしく、あたまの体操。無料・広告なし・オフラインの脳トレ（15言語）">
@@ -47,6 +47,7 @@
   <!-- ========== ゲーム共通ステージ ========== -->
   <section id="game" class="screen">
     <div class="g-progress"></div>
+    <button id="btnQuit" class="quit-x" data-i18n="quit">やめる</button>
     <div class="g-count"></div>
     <div class="g-instruct"></div>
     <div class="g-body"></div>
@@ -56,6 +57,7 @@
   <section id="result" class="screen">
     <div class="result-title" data-i18n="wellDone">よくできました！</div>
     <div id="resultBody"></div>
+    <button id="btnAgain" class="big-btn" data-i18n="again">もういちど やる</button>
     <button class="big-btn" data-home data-i18n="back">ホームにもどる</button>
   </section>
 
@@ -97,6 +99,17 @@
   <!-- 正誤フィードバック -->
   <div id="feedback"><div class="mark">○</div></div>
 
+  <!-- トレーニング中断の確認オーバーレイ -->
+  <div id="quitConfirm" class="quit-confirm" hidden>
+    <div class="quit-box">
+      <div class="quit-ask" data-i18n="quitAsk">とちゅうで やめますか？</div>
+      <div class="quit-actions">
+        <button id="quitYes" class="quit-btn yes" data-i18n="quit">やめる</button>
+        <button id="quitNo"  class="quit-btn no"  data-i18n="keepOn">つづける</button>
+      </div>
+    </div>
+  </div>
+
   <!-- スクリプト（順番が大事） -->
   <script src="data/config.js"></script>
   <script src="data/lang.js"></script>
@@ -107,7 +120,7 @@
   <script src="games/memory.js"></script>
   <script src="games/stroop.js"></script>
   <script src="games/silhouette.js"></script>
-<script src="games/numtouch.js"></script>
+  <script src="games/numtouch.js"></script>
   <script src="app.js"></script>
 
   <!-- Farcaster Mini App SDK：読込完了を通知しスプラッシュを閉じる（Farcaster外/オフラインでは無害にスキップ） -->
