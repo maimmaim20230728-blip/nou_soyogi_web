@@ -29,7 +29,12 @@ body.scale-L { font-size:clamp(23px,6.0vw,34px); }
 body.scale-XL{ font-size:clamp(26px,6.8vw,40px); }
 
 /* ---- 画面 ---- */
-.screen{ display:none; min-height:100dvh; padding:24px 20px;
+/* targetSdk36(Android15+)はエッジtoエッジ強制＝WebViewがステータスバー/ナビゲーションバーの
+   下まで描かれる。全画面共通の余白にインセットを足し、上下端の文字やボタンがバーの裏に
+   潜らないようにする（viewport-fit=cover 前提。バーが無い端末では env=0px で従来どおり）。 */
+.screen{ display:none; min-height:100dvh;
+  padding:calc(env(safe-area-inset-top, 0px) + 24px) max(20px, env(safe-area-inset-right, 0px))
+          calc(env(safe-area-inset-bottom, 0px) + 24px) max(20px, env(safe-area-inset-left, 0px));
   flex-direction:column; align-items:center; justify-content:center; text-align:center; }
 .screen.active{ display:flex; }
 
@@ -45,8 +50,22 @@ body.scale-XL{ font-size:clamp(26px,6.8vw,40px); }
   font-size:.9em; text-decoration:underline; cursor:pointer; }
 
 /* ========== ホーム ========== */
-.gear{ position:fixed; top:12px; right:14px; font-size:1.7em; color:#9a9a9a;
+/* ⚙️ 設定ボタン: 標準の歯車＋真上に「設定ボタン」の文字ラベル（高齢者に文字でも明示）。
+   右上に固定し、ラベルごと大きなタップ領域で確実に押せる。
+   （旧: top:12px/font-size:1.7em の「上すぎ・小さすぎて押せない」を解消） */
+.gear{ position:fixed;
+  top:calc(env(safe-area-inset-top, 0px) + 12px);
+  right:calc(env(safe-area-inset-right, 0px) + 10px);
+  min-width:76px; padding:6px 8px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  font-size:20px;   /* 文字サイズ設定に依存しない固定サイズ＝特大でも肥大化せずタイトルと重ならない（子spanのem基準も固定） */
   background:none; border:none; cursor:pointer; z-index:5; }
+.gear .gear-label{ font-size:.72em; font-weight:700; line-height:1.15; color:#3a3a3a; }
+.gear .gear-ico{ font-size:3.2em; line-height:1; color:#6b6b6b; }
+.gear.pressing{ transform:scale(.92); }
+/* 固定の設定ボタン(上)と本体が重ならないよう、ホームだけ本体全体をわずかに下げる。
+   safe center=画面が低く本体がはみ出す時は上寄せに退避し、上端が歯車の裏に潜らない。 */
+#home{ padding-top:calc(env(safe-area-inset-top, 0px) + 120px); justify-content:safe center; }
 .logo{ font-size:2.1em; font-weight:900; color:var(--brand-dark); margin-bottom:6px; }
 .tagline{ font-size:.9em; color:#555; margin-bottom:44px; }
 .start{ min-height:170px; font-size:1.45em; background:var(--accent);
@@ -73,10 +92,13 @@ body.scale-XL{ font-size:clamp(26px,6.8vw,40px); }
 .menu-btn .mi{ font-size:2.4em; line-height:1; }
 
 /* ========== ゲーム共通ステージ ========== */
-#game{ justify-content:flex-start; padding-top:64px; }
-.g-progress{ position:fixed; top:0; left:0; height:12px; width:0;
+/* 固定要素（進捗バー・残り問題数・やめる）はステータスバーの下に潜るので全てインセット分下げる。
+   #game の逃げ余白はその固定要素ぶんなので、同じだけ連動して増やす。 */
+#game{ justify-content:flex-start; padding-top:calc(env(safe-area-inset-top, 0px) + 64px); }
+.g-progress{ position:fixed; top:env(safe-area-inset-top, 0px); left:0; height:12px; width:0;
   background:var(--accent); transition:width .3s; z-index:6; }
-.g-count{ position:fixed; top:16px; right:18px; font-size:.85em; color:#666; z-index:6; }
+.g-count{ position:fixed; top:calc(env(safe-area-inset-top, 0px) + 16px);
+  right:max(18px, env(safe-area-inset-right, 0px)); font-size:.85em; color:#666; z-index:6; }
 .g-instruct{ font-size:1.05em; font-weight:700; color:#444; min-height:1.4em; margin-bottom:14px; }
 .g-body{ width:100%; display:flex; flex-direction:column; align-items:center; }
 
@@ -132,7 +154,8 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 .streak{ font-size:1.1em; margin-bottom:24px; }
 
 /* ========== 設定 ========== */
-.settings{ justify-content:flex-start; padding-top:40px; }
+/* 上寄せ＝見出し「せってい」がステータスバーに隠れるので、逃げ余白にインセットを足す */
+.settings{ justify-content:flex-start; padding-top:calc(env(safe-area-inset-top, 0px) + 40px); }
 .settings h2{ font-size:1.5em; margin:0 0 18px; }
 .set-label{ font-size:.85em; font-weight:800; color:#555; align-self:center;
   margin:18px 0 8px; }
@@ -228,7 +251,11 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 .records-btn:active,.records-btn.pressing{ transform:translateY(3px); box-shadow:0 2px 0 var(--brand-dark); }
 
 /* ===================== 記録（カレンダー） ===================== */
-.records{ justify-content:flex-start; padding:16px 8px 24px; }
+/* 上余白16pxはステータスバー(約44px)より小さく、月送り◀▶が完全に隠れて押せない。
+   .screen の余白を丸ごと上書きしているので、四辺ともここでインセットを入れ直す。 */
+.records{ justify-content:flex-start;
+  padding:calc(env(safe-area-inset-top, 0px) + 16px) max(8px, env(safe-area-inset-right, 0px))
+          calc(env(safe-area-inset-bottom, 0px) + 24px) max(8px, env(safe-area-inset-left, 0px)); }
 .cal-head{ display:flex; align-items:center; justify-content:space-between;
   width:100%; max-width:640px; margin:0 auto 12px; }
 .cal-nav{ font-size:1.5em; width:64px; min-height:64px; border:none; color:var(--brand-dark);
@@ -300,7 +327,8 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 
 /* ===================== トレーニング中断「やめる」 ===================== */
 /* ゲーム画面の左上に控えめに置く（右上のカウント表示と重ならない位置・小さめで誤タップ回避） */
-.quit-x{ position:fixed; top:14px; left:14px; z-index:7;
+.quit-x{ position:fixed; top:calc(env(safe-area-inset-top, 0px) + 14px);
+  left:max(14px, env(safe-area-inset-left, 0px)); z-index:7;
   font-size:.7em; font-weight:800; color:#8a8a8a;
   background:var(--surface); border:2px solid var(--line); border-radius:12px;
   padding:6px 14px; min-height:40px; cursor:pointer; }
@@ -309,7 +337,9 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 /* 中断の確認オーバーレイ（画面中央にカード） */
 .quit-confirm{ position:fixed; inset:0; z-index:60;
   display:flex; align-items:center; justify-content:center;
-  background:rgba(0,0,0,.42); padding:24px; }
+  background:rgba(0,0,0,.42);
+  padding:max(24px, env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px))
+          max(24px, env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px)); }
 .quit-confirm[hidden]{ display:none; }             /* .quit-confirmのdisplay:flexより優先させ、hidden属性を尊重 */
 .quit-box{ background:var(--surface); border-radius:24px; padding:28px 24px;
   width:100%; max-width:420px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,.25); }
