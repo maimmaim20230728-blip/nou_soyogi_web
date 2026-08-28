@@ -22,4 +22,4 @@ An offline, free, ad-free brain-training app for older adults — 4 mini-games i
 外部通信は Farcaster 内での SDK 読み込み（esm.sh）のみで、通常/オフライン時は無害にスキップ。
 
 ## 開発 / Credit
-アプリ開発：介護と支援の相談どころ **そよぎ** — https://soyogi.hp.peraichi.com/top
+アプリ開発：介護と支援の相談どころ **そよぎ** — https://soudansoyogi.com/
