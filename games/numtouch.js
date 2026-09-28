@@ -2,7 +2,10 @@
    ・round(ctx, opts, done) = 1ラウンド出題（1から順に全部タップしたら終了）
    ・通常=1〜5 / opts.hard=1〜8。数字ボタンは重ならないようランダム配置
    ・正しい順＝緑にして無効化＋正解音／間違い＝赤フラッシュ＋不正解音でミス記録
-   ・ミス0なら正解、1以上なら不正解として done(ok) で返す（他ゲームと同じ形式）  */
+   ・ミス0なら正解、1以上なら不正解として done(ok) で返す（他ゲームと同じ形式）
+   ・せっていで まちがいの合図を「ださない」にすると(Store.getMissCue()=false)、
+     間違いでも失敗音・赤フラッシュ・「あっ、ちがう」・最後の✕を出さず、「つぎは 3」とだけ知らせる。
+     ミスの記録(結果画面の数)は変えない  */
 const NumTouchGame = {
   id:'numtouch', icon:'🔢',
   round(ctx, opts, done){
@@ -39,6 +42,12 @@ const NumTouchGame = {
       ctx.instruct(t('oops'));
       oopsTimer = setTimeout(()=>{ ctx.instruct(t('tapNumber')); }, 1200);
     }
+    // 合図を「ださない」とき: つぎに押す数字だけを同じ長さで知らせる
+    function showNext(){
+      clearTimeout(oopsTimer);
+      ctx.instruct(t('nextIs').replace('{n}', nextNum));
+      oopsTimer = setTimeout(()=>{ ctx.instruct(t('tapNumber')); }, 1200);
+    }
 
     for(let num=1; num<=n; num++){
       const cell = chosen[num-1];
@@ -62,12 +71,14 @@ const NumTouchGame = {
           if(cleared === n){                 // 全部そろった＝ラウンド終了
             clearTimeout(oopsTimer);         // 保留中の指示文戻しが次ゲームに残らないよう破棄
             const ok = (miss === 0);         // ミス0なら正解・1以上なら不正解
-            Feedback.flash(ok, ()=> done(ok));
+            if(ok || Store.getMissCue()) Feedback.flash(ok, ()=> done(ok));
+            else setTimeout(()=> done(ok), 700);   // 合図なし: ✕も音も出さず、少し間をおいて次へ
           } else {
             Sound.ok();                      // 途中の正解は軽く効果音
           }
         } else {                             // 順番ちがい＝ミスとして記録し続行
           miss++;
+          if(!Store.getMissCue()){ showNext(); return; }   // 合図なし: 失敗音・赤フラッシュを出さない
           Sound.ng();
           showOops();                        // 「あっ、ちがう。1から じゅんばんに」を約1.2秒表示（B-6）
           b.classList.remove('wrong'); void b.offsetWidth;   // アニメを再発火させる

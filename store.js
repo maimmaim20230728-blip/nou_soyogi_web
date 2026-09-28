@@ -101,5 +101,8 @@ const Store = (() => {
     setLang(c){ localStorage.setItem('soyogi.lang', c); },
     getScale(){ return localStorage.getItem('soyogi.scale') || 'M'; },
     setScale(s){ localStorage.setItem('soyogi.scale', s); },
+    /* かずタッチの まちがいの合図(失敗音・赤い光・✕)。既定=だす。'off' のときだけ出さない */
+    getMissCue(){ return localStorage.getItem('soyogi.missCue') !== 'off'; },
+    setMissCue(on){ localStorage.setItem('soyogi.missCue', on ? 'on' : 'off'); },
   };
 })();

@@ -172,6 +172,13 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 .size-btn.sel{ border-color:var(--brand); background:var(--tap); }
 .sound-btn{ font-size:2em; width:96px; min-height:76px; border:3px solid var(--line);
   border-radius:16px; background:var(--surface); cursor:pointer; }
+/* かずタッチの まちがいの合図 だす/ださない（見出しは長い言語でも折り返して中央に） */
+.set-label[data-i18n="missCue"]{ text-align:center; max-width:540px; }
+.cue-row{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+.cue-btn{ background:var(--surface); border:3px solid var(--line); border-radius:14px;
+  min-width:120px; min-height:72px; padding:0 18px; font-size:1em; font-weight:800;
+  cursor:pointer; color:var(--text); }
+.cue-btn.sel{ border-color:var(--brand); background:var(--tap); }
 
 /* ========== 正誤フィードバック ========== */
 #feedback{ position:fixed; inset:0; display:none; align-items:center; justify-content:center;

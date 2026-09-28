@@ -200,6 +200,9 @@ function bindSettingsStatic(){
   Tap.bind(sb, ()=>{ Sound.toggle(); reflectSettings(); }, { silent:true });
   const mb = document.getElementById('bgmBtn');
   Tap.bind(mb, ()=>{ Bgm.toggle(); reflectSettings(); });
+  document.querySelectorAll('#cueRow .cue-btn').forEach(b=>{
+    Tap.bind(b, ()=>{ Store.setMissCue(b.dataset.cue === 'on'); reflectSettings(); });
+  });
 }
 
 /* 設定画面の状態反映のみ（大きさの選択・音/BGMのアイコン）。バインドはしない＝何度呼んでも安全 */
@@ -209,6 +212,10 @@ function reflectSettings(){
   });
   document.getElementById('soundBtn').textContent = Sound.enabled ? '🔊' : '🔇';
   document.getElementById('bgmBtn').textContent   = Bgm.enabled ? '🎵' : '🔇';
+  const cue = Store.getMissCue();
+  document.querySelectorAll('#cueRow .cue-btn').forEach(b=>{
+    b.classList.toggle('sel', (b.dataset.cue === 'on') === cue);
+  });
 }
 
 function renderSettings(){

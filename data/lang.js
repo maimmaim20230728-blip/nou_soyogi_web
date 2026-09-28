@@ -364,6 +364,37 @@ const OOPS = {
   es:'¡Uy! En orden desde el 1', pt:'Ops! Em ordem, do 1', fr:'Oups ! Dans l\'ordre, depuis 1', de:'Hoppla! Der Reihe nach ab 1', it:'Ops! In ordine, dal 1',
   nl:'Oeps! Op volgorde vanaf 1', pl:'Ojej! Po kolei od 1', ru:'Ой! По порядку с 1', tr:'Hop! 1\'den sırayla', hi:'अरे! 1 से क्रम में',
 };
+/* v1.7 かずタッチの まちがいの合図(せってい)と、合図を出さないときの「つぎは 3」 */
+const MISSCUE = {
+  ja:'かずタッチの まちがいの おと・あかい ひかり', en:'Tap 1-2-3: sound and red flash for a wrong tap',
+  zh:'数字点点：点错时的声音和红色闪光', 'zh-TW':'數字點點：點錯時的聲音和紅色閃光', ko:'숫자 터치: 잘못 눌렀을 때 소리와 빨간 빛',
+  es:'Toca 1-2-3: sonido y destello rojo al fallar', pt:'Toque 1-2-3: som e luz vermelha ao errar',
+  fr:'Touche 1-2-3 : son et flash rouge en cas d\'erreur', de:'Tipp 1-2-3: Ton und rotes Aufblinken bei Fehlern',
+  it:'Tocca 1-2-3: suono e lampo rosso se sbagli', nl:'Tik 1-2-3: geluid en rode flits bij een fout',
+  pl:'Dotknij 1-2-3: dźwięk i czerwony błysk przy pomyłce', ru:'Нажми 1-2-3: звук и красная вспышка при ошибке',
+  tr:'Dokun 1-2-3: yanlış dokununca ses ve kırmızı ışık', hi:'1-2-3 छुएँ: गलती पर आवाज़ और लाल चमक',
+};
+const CUEON = {
+  ja:'だす', en:'On', zh:'开', 'zh-TW':'開', ko:'켜기',
+  es:'Sí', pt:'Sim', fr:'Oui', de:'An', it:'Sì',
+  nl:'Aan', pl:'Tak', ru:'Да', tr:'Açık', hi:'चालू',
+};
+const CUEOFF = {
+  ja:'ださない', en:'Off', zh:'关', 'zh-TW':'關', ko:'끄기',
+  es:'No', pt:'Não', fr:'Non', de:'Aus', it:'No',
+  nl:'Uit', pl:'Nie', ru:'Нет', tr:'Kapalı', hi:'बंद',
+};
+const NEXTIS = {
+  ja:'つぎは {n}', en:'Next: {n}', zh:'下一个是 {n}', 'zh-TW':'下一個是 {n}', ko:'다음은 {n}',
+  es:'El siguiente: {n}', pt:'O próximo: {n}', fr:'Suivant : {n}', de:'Als Nächstes: {n}', it:'Il prossimo: {n}',
+  nl:'Volgende: {n}', pl:'Następna: {n}', ru:'Следующее: {n}', tr:'Sıradaki: {n}', hi:'अगला: {n}',
+};
+Object.keys(LANG).forEach(k=>{
+  LANG[k].ui.missCue = MISSCUE[k];
+  LANG[k].ui.cueOn   = CUEON[k];
+  LANG[k].ui.cueOff  = CUEOFF[k];
+  LANG[k].ui.nextIs  = NEXTIS[k];
+});
 Object.keys(LANG).forEach(k=>{
   LANG[k].ui.again      = AGAIN[k];
   LANG[k].ui.quit       = QUIT_[k];
