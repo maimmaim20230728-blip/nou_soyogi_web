@@ -367,6 +367,7 @@ function minimizeApp(){
   try{ if(ap){ const p = ap.minimizeApp(); if(p && p.catch) p.catch(()=>{}); } }catch(e){}
 }
 function onBack(){
+  if(guideOv){ guideOv._back(); return; }                                             // ⓪ はじめての あそびかた
   if(!document.getElementById('quitConfirm').hidden){ hideQuitConfirm(); return; }   // ①
   const cur = document.querySelector('.screen.active');
   const id = cur ? cur.id : 'home';
@@ -379,6 +380,91 @@ function watchBack(){
   const ap = nativeApp('addListener');
   if(!ap) return;
   try{ const r = ap.addListener('backButton', ()=>{ onBack(); }); if(r && r.catch) r.catch(()=>{}); }catch(e){}
+}
+
+/* ===== はじめての あそびかた（初回の案内・2026-09-30） =====
+   ヒロさん「ひとつずつ・そよぎ みたいなタイプのアプリは、必ず最初に使い方の丁寧な説明を出してほしい。10代の情報室のように」。
+   ・初回起動で必ず出す（最後まで読むまで、開くたびに出る）。文言は lang.js の GUIDE（LANG[k].guide）
+   ・1ページずつ「つぎ」「まえ」で進む。閉じるのは最後のページの「はじめる」だけ（× は置かない）
+   ・1ページ目に「ことば」（せっていと同じ15言語のボタン）。案内が画面を全部おおうので、ここでも えらべるように
+   ・戻るボタン（Play版）: 2ページ目から=まえのページ / 1ページ目=初回なら後ろに下げる（閉じない）、せっていから開いたときは閉じる
+   ・読み終えたら localStorage 'soyogi.nou.guide.v1'。せっていの「あそびかたを もういちど みる」で もう一度
+   ・BGM は今までどおり（起動で鳴る決まりは変えない）。ボタンは Tap 方式（長押しでも押せる・あとから来るクリックは tap.js が捨てる） */
+const GUIDE_KEY = 'soyogi.nou.guide.v1';
+function guideDone(){ try{ return !!localStorage.getItem(GUIDE_KEY); }catch(e){ return false; } }
+let guideOv = null;
+function openGuide(first){
+  if(guideOv) return;                                  // もう開いていれば開かない（二重に出さない）
+  if(!I18N.guide || !I18N.guide.bodies || !I18N.guide.bodies.length) return;
+  let i = 0;
+  const mk = (tag, cls) => { const e = document.createElement(tag); if(cls) e.className = cls; return e; };
+  const ov = mk('div', 'guide-ov'); ov.id = 'guideOv';
+  ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true');
+  const scroll = mk('div', 'guide-scroll'), box = mk('div', 'guide-box');
+  const top = mk('div', 'guide-top'), ttl = mk('p', 'guide-title'), step = mk('p', 'guide-step');
+  step.setAttribute('dir', 'ltr');                     // 「2 / 7」は いつも左から
+  top.appendChild(ttl); top.appendChild(step);
+  const h = mk('h2', 'guide-h'), p = mk('p', 'guide-p');
+  const langWrap = mk('div', 'guide-lang'), langLbl = mk('div', 'set-label'), langGrid = mk('div', 'lang-grid');
+  langWrap.appendChild(langLbl); langWrap.appendChild(langGrid);
+  const dots = mk('div', 'guide-dots'); dots.setAttribute('aria-hidden', 'true');
+  box.appendChild(top); box.appendChild(h); box.appendChild(p); box.appendChild(langWrap); box.appendChild(dots);
+  scroll.appendChild(box);
+  const row = mk('div', 'guide-row');
+  const prevB = mk('button', 'guide-btn guide-prev'), nextB = mk('button', 'guide-btn guide-next');
+  prevB.type = 'button'; nextB.type = 'button';
+  row.appendChild(prevB); row.appendChild(nextB);
+  ov.appendChild(scroll); ov.appendChild(row);
+  function drawLang(){                                  // せっていの「ことば」と同じ15のボタン
+    langGrid.innerHTML = '';
+    LANGS.forEach(l=>{
+      const b = mk('button', 'lang-btn' + (l.code === CUR ? ' sel' : ''));
+      b.type = 'button'; b.textContent = l.label; b.dataset.c = l.code;
+      const pick = ()=>{
+        CUR = l.code; Store.setLang(CUR); applyI18n(); renderHome();
+        const st = document.getElementById('settings');
+        if(st && st.classList.contains('active')) renderSettings();   // せっていから開いたときは下の画面も訳し直す
+        draw();
+      };
+      Tap.bind(b, pick); b.addEventListener('click', pick);
+      langGrid.appendChild(b);
+    });
+  }
+  function draw(){
+    const G0 = I18N.guide, n = G0.bodies.length;
+    if(i > n - 1) i = n - 1;
+    ov.setAttribute('aria-label', G0.title);
+    ttl.textContent = G0.title;
+    step.textContent = String(G0.step).replace('{n}', i + 1).replace('{m}', n);
+    h.textContent = G0.heads[i] || '';
+    p.textContent = G0.bodies[i];
+    langWrap.style.display = (i === 0) ? '' : 'none';
+    if(i === 0){ langLbl.textContent = t('language'); drawLang(); }
+    dots.innerHTML = '';
+    for(let k = 0; k < n; k++) dots.appendChild(mk('span', 'guide-dot' + (k === i ? ' on' : '')));
+    prevB.textContent = G0.prev;
+    prevB.style.visibility = (i === 0) ? 'hidden' : 'visible';   // 「つぎ」の位置を変えない
+    nextB.textContent = (i === n - 1) ? G0.start : G0.next;
+    nextB.classList.toggle('last', i === n - 1);
+    scroll.scrollTop = 0;
+  }
+  function close(){
+    try{ localStorage.setItem(GUIDE_KEY, '1'); }catch(e){}
+    ov.remove();
+    guideOv = null;
+  }
+  ov._draw = draw;
+  ov._back = ()=>{
+    if(i > 0){ i--; draw(); return; }
+    if(first) minimizeApp(); else close();              // 初回は閉じずに後ろに下げる（10代の情報室と同じ）
+  };
+  const act = (el, fn) => { Tap.bind(el, fn); el.addEventListener('click', fn); };   // 読み上げ(TalkBack)・キーボードは click だけを出すので click も受ける（指の あとから来る click は tap.js が捨てる＝二重にならない）
+  act(prevB, ()=>{ if(i > 0){ i--; draw(); } });
+  act(nextB, ()=>{ if(i < I18N.guide.bodies.length - 1){ i++; draw(); } else close(); });
+  draw();
+  document.body.appendChild(ov);
+  guideOv = ov;
+  try{ nextB.focus(); }catch(e){}
 }
 
 /* ===== 起動 ===== */
@@ -403,9 +489,11 @@ function init(){
   Tap.bind(document.getElementById('quitYes'), ()=>{ quitTraining(); });
   Tap.bind(document.getElementById('quitNo'),  ()=>{ hideQuitConfirm(); });
   document.querySelectorAll('[data-home]').forEach(b=> Tap.bind(b, ()=>{ renderHome(); show('home'); }));
+  Tap.bind(document.getElementById('btnGuide'), ()=>{ openGuide(false); });   // せっていの「あそびかたを もういちど みる」
 
   show('home');
   Bgm.start();   // 起動時に自動でBGM開始（PWA/Androidは即・Webは制限で最初の操作時に自動発火）
+  if(!guideDone()) openGuide(true);   // はじめての あそびかた（読み終えるまで毎回・2026-09-30）
 }
 document.addEventListener('DOMContentLoaded', init);
 // 保険：Webの自動再生制限で保留中なら、最初の操作でAudioContextを解禁→onstatechangeで自動発火

@@ -360,3 +360,43 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 
 /* ===================== 記録：日別詳細の時刻 ===================== */
 .dd-time{ font-size:.72em; font-weight:700; color:#8a8a8a; }
+
+/* ===================== はじめての あそびかた（app.js openGuide・2026-09-30） ===================== */
+/* 画面ぜんぶをおおう（歯車・やめる確認より上）。本文だけがスクロールし、「まえ／つぎ」は下の地の色の帯に置く
+   ＝長いページでも本文がボタンのすき間から透けず、最後の行も帯に隠れない（帯は流れの中＝固定の top/bottom は使わない） */
+.guide-ov{ position:fixed; inset:0; z-index:70; display:flex; flex-direction:column; background:var(--bg); }
+.guide-scroll{ flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  padding:calc(env(safe-area-inset-top, 0px) + 22px) max(20px, env(safe-area-inset-right, 0px))
+          24px max(20px, env(safe-area-inset-left, 0px)); }
+.guide-box{ width:100%; max-width:560px; margin:0 auto; text-align:left; }
+.guide-top{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+.guide-title{ margin:0; font-size:.85em; font-weight:800; color:var(--brand-dark); }
+.guide-step{ margin:0; font-size:.85em; font-weight:800; color:#666; white-space:nowrap; unicode-bidi:isolate; }
+.guide-h{ font-size:1.3em; line-height:1.4; margin:14px 0 12px; color:var(--brand-dark);
+  line-break:strict; overflow-wrap:anywhere; }
+.guide-p{ font-size:1em; line-height:1.75; margin:0; white-space:pre-line; line-break:strict; overflow-wrap:anywhere; }
+/* 日本語(分かち書き)と韓国語は 空白で折る(語の途中で切らない)。中国語などは ふつうの折り方(「。」を行の頭にしない) */
+html[lang="ja"] .guide-h, html[lang="ja"] .guide-p, html[lang="ko"] .guide-h, html[lang="ko"] .guide-p{ word-break:keep-all; }
+.guide-lang{ margin-top:6px; text-align:center; }
+.guide-lang .lang-grid{ margin:0 auto; grid-template-columns:repeat(3,minmax(0,1fr)); }
+.guide-lang .lang-btn{ min-width:0; padding:4px 6px; overflow-wrap:anywhere; }
+@media (max-width:480px){ .guide-lang .lang-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }   /* せまい画面で文字の大きい設定でも ことばの名前が切れない */
+.guide-dots{ display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin:24px 0 0; }
+.guide-dot{ width:12px; height:12px; border-radius:50%; background:var(--line); }
+.guide-dot.on{ background:var(--brand); }
+.guide-row{ flex:0 0 auto; display:flex; gap:12px; background:var(--bg); border-top:2px solid var(--line);
+  padding:12px max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 14px)
+          max(16px, env(safe-area-inset-left, 0px)); }
+.guide-btn{ flex:1 1 0; min-width:0; min-height:80px; font:inherit; font-size:1.05em; font-weight:800;
+  border-radius:20px; cursor:pointer; padding:8px 10px; line-height:1.2; overflow-wrap:anywhere; }
+.guide-prev{ background:var(--surface); color:var(--text); border:3px solid var(--line); }
+.guide-next{ color:#fff; background:var(--brand); border:none; box-shadow:0 5px 0 var(--brand-dark); }
+.guide-next.last{ background:var(--accent); box-shadow:0 5px 0 var(--accent-dark); }   /* 最後の「はじめる」＝ホームの「はじめる」と同じ色 */
+.guide-btn:active,.guide-btn.pressing{ transform:translateY(3px); }
+.guide-next:active,.guide-next.pressing{ box-shadow:0 2px 0 var(--brand-dark); }
+.guide-next.last:active,.guide-next.last.pressing{ box-shadow:0 2px 0 var(--accent-dark); }
+/* せっていの「あそびかたを もういちど みる」 */
+.guide-again-btn{ background:var(--surface); border:3px solid var(--line); border-radius:14px;
+  min-height:72px; max-width:540px; padding:10px 22px; font:inherit; font-size:.9em; font-weight:800;
+  color:var(--text); cursor:pointer; }
+.guide-again-btn:active,.guide-again-btn.pressing{ background:var(--tap); }
