@@ -343,11 +343,50 @@ function renderDayDetail(key){
   el.innerHTML = html;
 }
 
+/* ===== Android の戻るボタン（Play版だけ・2026-09-30） =====
+   @capacitor/app が無いと、戻るを押すとアプリごと後ろに下がっていた（Android 11 以前は閉じる）。
+   押したときの順: ①「とちゅうで やめますか？」が出ていたら「つづける」と同じ（とじるだけ。やめない）
+                  ②トレーニング中なら「やめる」を押したときと同じ確認を出す（いきなり やめない）
+                  ③はじめる/結果/せってい/記録 は「ホームにもどる」と同じ
+                  ④ホームなら、アプリを後ろに下げる（minimizeApp。記録はそのまま）
+   🔴 プラグインはネイティブが入れる Capacitor.Plugins.App を使う（registerPlugin は WebView に無い）
+   Web版（ブラウザ）は何もしない（戻るはブラウザのまま） */
+function isNativeApp(){
+  try{ const c = window.Capacitor; return !!(c && typeof c.isNativePlatform === 'function' && c.isNativePlatform()); }catch(e){ return false; }
+}
+function nativeApp(fn){
+  try{
+    const c = window.Capacitor;
+    if(typeof c.isPluginAvailable === 'function' && !c.isPluginAvailable('App')) return null;
+    const p = c.Plugins && c.Plugins.App;
+    return (p && typeof p[fn] === 'function') ? p : null;
+  }catch(e){ return null; }
+}
+function minimizeApp(){
+  const ap = nativeApp('minimizeApp');
+  try{ if(ap){ const p = ap.minimizeApp(); if(p && p.catch) p.catch(()=>{}); } }catch(e){}
+}
+function onBack(){
+  if(!document.getElementById('quitConfirm').hidden){ hideQuitConfirm(); return; }   // ①
+  const cur = document.querySelector('.screen.active');
+  const id = cur ? cur.id : 'home';
+  if(id === 'game'){ showQuitConfirm(); return; }                                    // ②
+  if(id !== 'home'){ renderHome(); show('home'); return; }                           // ③ data-home と同じ
+  minimizeApp();                                                                      // ④
+}
+function watchBack(){
+  if(!isNativeApp()) return;
+  const ap = nativeApp('addListener');
+  if(!ap) return;
+  try{ const r = ap.addListener('backButton', ()=>{ onBack(); }); if(r && r.catch) r.catch(()=>{}); }catch(e){}
+}
+
 /* ===== 起動 ===== */
 function init(){
   setScale(Store.getScale());
   applyI18n();
   renderHome();
+  watchBack();            // Android の戻るボタン（Play版だけ）
 
   bindSettingsStatic();   // 設定の固定ボタン(大きさ・おと・おんがく)は起動時に一度だけバインド（A-1）
 
