@@ -426,7 +426,7 @@ function openGuide(first){
         if(st && st.classList.contains('active')) renderSettings();   // せっていから開いたときは下の画面も訳し直す
         draw();
       };
-      Tap.bind(b, pick); b.addEventListener('click', pick);
+      Tap.bind(b, pick);
       langGrid.appendChild(b);
     });
   }
@@ -458,7 +458,7 @@ function openGuide(first){
     if(i > 0){ i--; draw(); return; }
     if(first) minimizeApp(); else close();              // 初回は閉じずに後ろに下げる（10代の情報室と同じ）
   };
-  const act = (el, fn) => { Tap.bind(el, fn); el.addEventListener('click', fn); };   // 読み上げ(TalkBack)・キーボードは click だけを出すので click も受ける（指の あとから来る click は tap.js が捨てる＝二重にならない）
+  const act = (el, fn) => { Tap.bind(el, fn); };   // 読み上げ(TalkBack)・キーボードの click も tap.js が受ける（2026-09-30。ここで click を足すと二重に進む）
   act(prevB, ()=>{ if(i > 0){ i--; draw(); } });
   act(nextB, ()=>{ if(i < I18N.guide.bodies.length - 1){ i++; draw(); } else close(); });
   draw();

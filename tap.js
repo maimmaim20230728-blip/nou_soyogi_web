@@ -13,6 +13,9 @@
                押し込み中のブレで pointercancel が来ないようにする
              {silent:true} … 押下音を鳴らさない
              Tap.markGhost(e) … Tap.bind 以外で pointerup に画面を切り替える所から呼ぶ（下の 👻）
+   ・🔴 click も受ける（2026-09-30）: 読み上げ(TalkBack)・スイッチ操作・音声操作・キーボードは
+     pointer イベントを出さず click だけを出す。pointerup だけでは この人たちには どのボタンも押せなかった。
+     直前 700ms 以内に pointerup で発火していたら、その click は捨てる（二重にしない）
    ========================================================= */
 const Tap = (() => {
   const MOVE_LIMIT = 36;   // これ以上ずれたら「迷い/スクロール」とみなし発火しない
@@ -42,7 +45,7 @@ const Tap = (() => {
   function bind(el, fn, opts){
     const o = opts || {};
     el.style.touchAction = o.game ? 'none' : 'manipulation';
-    let sx = 0, sy = 0, pid = null;
+    let sx = 0, sy = 0, pid = null, lastFire = 0;
     el.addEventListener('pointerdown', e=>{
       if(!e.isPrimary) return;
       pid = e.pointerId; sx = e.clientX; sy = e.clientY;
@@ -57,11 +60,19 @@ const Tap = (() => {
       pid = null;
       el.classList.remove('pressing');
       if(Math.hypot(e.clientX - sx, e.clientY - sy) <= MOVE_LIMIT){
+        lastFire = Date.now();
         markGhost(e);   // このあとの同じ指の click を捨てる（上の 👻）
         fn(e);
       }
     });
     el.addEventListener('pointercancel', ()=>{ pid = null; el.classList.remove('pressing'); });
+    // 読み上げ・スイッチ・音声操作・キーボードの click（pointer が来ない）。指やマウスの pointerup で発火した直後の click は捨てる
+    el.addEventListener('click', e=>{
+      if(Date.now() - lastFire < 700) return;
+      lastFire = Date.now();
+      if(!o.silent) Sound.tap();          // 指で押したときと同じ手応え音（押した順も同じ＝音が先）
+      fn(e);
+    });
     el.addEventListener('contextmenu', e=> e.preventDefault());   // 長押しメニュー抑止
   }
   return { bind, markGhost };
