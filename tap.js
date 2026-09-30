@@ -12,7 +12,8 @@
                touch-action:none でブラウザのパン判定を完全に止め、
                押し込み中のブレで pointercancel が来ないようにする
              {silent:true} … 押下音を鳴らさない
-             Tap.markGhost(e) … Tap.bind 以外で pointerup に画面を切り替える所から呼ぶ（下の 👻）
+             Tap.markGhost(e) … Tap.bind 以外で pointerup に画面を切り替える所から呼ぶ（下の 👻）。
+               処理が重いと時刻が切れるので、その処理のあとでも もう一度呼ぶ（⏱ 2026-10-01）
    ・🔴 click も受ける（2026-09-30）: 読み上げ(TalkBack)・スイッチ操作・音声操作・キーボードは
      pointer イベントを出さず click だけを出す。pointerup だけでは この人たちには どのボタンも押せなかった。
      直前 700ms 以内に pointerup で発火していたら、その click は捨てる（二重にしない）
@@ -62,7 +63,16 @@ const Tap = (() => {
       if(Math.hypot(e.clientX - sx, e.clientY - sy) <= MOVE_LIMIT){
         lastFire = Date.now();
         markGhost(e);   // このあとの同じ指の click を捨てる（上の 👻）
-        fn(e);
+        const g = ghost;
+        try{ fn(e); }
+        finally{
+          /* ⏱ 同じ指の click は、押した処理(fn)が終わってから届く。処理が重くて 700ms を越えると(遅い端末など)、
+             付けた時刻が切れて click が通り、2回押しになる・切り替わった先の同じ位置のボタンまで押される(2026-10-01 に確かめた)。
+             処理のあとで時刻を付け直す */
+          const now = Date.now();
+          lastFire = now;
+          if(ghost === g) g.until = now + 700;
+        }
       }
     });
     el.addEventListener('pointercancel', ()=>{ pid = null; el.classList.remove('pressing'); });
