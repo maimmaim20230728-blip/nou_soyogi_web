@@ -109,6 +109,8 @@
 
   <!-- 正誤フィードバック -->
   <div id="feedback"><div class="mark">○</div></div>
+  <!-- 読み上げソフトへの知らせ（正誤など・見た目には出さない・app.js srSay） -->
+  <div id="srLive" class="sr-only" role="status" aria-live="polite"></div>
 
   <!-- トレーニング中断の確認オーバーレイ -->
   <div id="quitConfirm" class="quit-confirm" hidden>
@@ -136,10 +138,13 @@
 
   <!-- Farcaster Mini App SDK：読込完了を通知しスプラッシュを閉じる（Farcaster外/オフラインでは無害にスキップ） -->
   <script type="module">
-    try {
-      const { sdk } = await import("https://esm.sh/@farcaster/miniapp-sdk");
-      await sdk.actions.ready();
-    } catch (e) { /* Farcaster外では何もしない */ }
+    /* Farcaster の中(iframe / アプリの WebView)で開いたときだけ SDK を読む。ふつうのブラウザ・PWA では外へつながない */
+    if ((window.self !== window.top) || window.ReactNativeWebView) {
+      try {
+        const { sdk } = await import("https://esm.sh/@farcaster/miniapp-sdk");
+        await sdk.actions.ready();
+      } catch (e) { /* Farcaster外では何もしない */ }
+    }
   </script>
 </body>
 </html>

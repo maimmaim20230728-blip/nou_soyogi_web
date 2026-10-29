@@ -400,3 +400,9 @@ html[lang="ja"] .guide-h, html[lang="ja"] .guide-p, html[lang="ko"] .guide-h, ht
   min-height:72px; max-width:540px; padding:10px 22px; font:inherit; font-size:.9em; font-weight:800;
   color:var(--text); cursor:pointer; }
 .guide-again-btn:active,.guide-again-btn.pressing{ background:var(--tap); }
+/* 読み上げソフトだけに伝える領域（app.js srSay・2026-10-30） */
+.sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+/* 記録を保存できなかったときの一言（結果画面のいちばん上） */
+.save-fail{ color:var(--wrong); font-weight:800; border:3px solid var(--wrong); border-radius:14px; padding:10px 14px; margin:0 auto 12px; max-width:540px; background:var(--surface); }
+/* カレンダーの日をキーボードで選んだとき */
+.cal-cell:focus-visible{ outline:4px solid var(--brand); outline-offset:2px; }

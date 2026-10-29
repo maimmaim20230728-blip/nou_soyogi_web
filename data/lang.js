@@ -213,7 +213,7 @@ const LANG = {
   },
 
   ru: {
-    ui:{ tagline:'Сегодня — лёгкая гимнастика для ума.', start:'Начать сегодняшнюю тренировку',
+    ui:{ tagline:'И сегодня: лёгкая гимнастика для ума.', start:'Начать сегодняшнюю тренировку',
       usual:'Как обычно', choose:'Выбрать', back:'Домой', wellDone:'Молодец!',
       correct:'верно', watch:'Смотрите', yourTurn:'Ваш ход',
       tapColor:'Нажмите ЦВЕТ слова', whatIsThis:'Что это?',
@@ -268,22 +268,40 @@ const LANG = {
 /* ---- クレジット（タイトル画面のHPリンク文言・15言語） ---- */
 const CREDITS = {
   ja:'アプリ開発：介護と支援の相談どころ　そよぎ',
-  en:'Developed by Soyogi — Care & Support Consultation',
+  en:'Developed by Soyogi (Care & Support Consultation)',
   zh:'开发：介护与支援咨询处 Soyogi',
   'zh-TW':'開發：介護與支援諮詢處 Soyogi',
   ko:'개발: 돌봄·지원 상담소 Soyogi',
-  es:'Desarrollado por Soyogi — Consultas de cuidado y apoyo',
-  pt:'Desenvolvido pela Soyogi — Consultoria de cuidado e apoio',
-  fr:'Développé par Soyogi — Consultations de soins et de soutien',
-  de:'Entwickelt von Soyogi — Pflege- und Unterstützungsberatung',
-  it:'Sviluppato da Soyogi — Consulenza per cura e supporto',
-  nl:'Ontwikkeld door Soyogi — Zorg- en ondersteuningsadvies',
-  pl:'Opracowane przez Soyogi — poradnia opieki i wsparcia',
-  ru:'Разработано Soyogi — консультации по уходу и поддержке',
-  tr:'Geliştiren: Soyogi — Bakım ve destek danışmanlığı',
+  es:'Desarrollado por Soyogi (Consultas de cuidado y apoyo)',
+  pt:'Desenvolvido pela Soyogi (Consultoria de cuidado e apoio)',
+  fr:'Développé par Soyogi (Consultations de soins et de soutien)',
+  de:'Entwickelt von Soyogi (Pflege- und Unterstützungsberatung)',
+  it:'Sviluppato da Soyogi (Consulenza per cura e supporto)',
+  nl:'Ontwikkeld door Soyogi (Zorg- en ondersteuningsadvies)',
+  pl:'Opracowane przez Soyogi (poradnia opieki i wsparcia)',
+  ru:'Разработано Soyogi (консультации по уходу и поддержке)',
+  tr:'Geliştiren: Soyogi (Bakım ve destek danışmanlığı)',
   hi:'विकसित: देखभाल और सहायता परामर्श केंद्र Soyogi',
 };
 Object.keys(CREDITS).forEach(k=>{ if(LANG[k]) LANG[k].ui.credit = CREDITS[k]; });
+
+/* ---- 読み上げソフトに伝える正誤(○✕と同時に・画面には出さない)と、記録を保存できなかったときの一言（15言語・2026-10-30） ---- */
+const SR_RIGHT = {
+  ja:'せいかい', en:'Correct', zh:'答对了', 'zh-TW':'答對了', ko:'정답',
+  es:'Correcto', pt:'Certo', fr:'Correct', de:'Richtig', it:'Giusto',
+  nl:'Goed', pl:'Dobrze', ru:'Верно', tr:'Doğru', hi:'सही',
+};
+const SR_WRONG = {
+  ja:'まちがい', en:'Incorrect', zh:'不对', 'zh-TW':'不對', ko:'틀렸어요',
+  es:'Incorrecto', pt:'Errado', fr:'Incorrect', de:'Falsch', it:'Sbagliato',
+  nl:'Fout', pl:'Źle', ru:'Неверно', tr:'Yanlış', hi:'गलत',
+};
+const SAVEFAIL = {
+  ja:'きろくを ほぞんできませんでした', en:'Could not save this record', zh:'无法保存记录', 'zh-TW':'無法儲存紀錄', ko:'기록을 저장하지 못했어요',
+  es:'No se pudo guardar el registro', pt:'Não foi possível salvar o registro', fr:'Impossible d’enregistrer l’historique', de:'Der Eintrag konnte nicht gespeichert werden', it:'Impossibile salvare il risultato',
+  nl:'Het record kon niet worden opgeslagen', pl:'Nie udało się zapisać wyniku', ru:'Не удалось сохранить запись', tr:'Kayıt kaydedilemedi', hi:'रिकॉर्ड सेव नहीं हो सका',
+};
+Object.keys(LANG).forEach(k=>{ LANG[k].ui.srRight = SR_RIGHT[k]; LANG[k].ui.srWrong = SR_WRONG[k]; LANG[k].ui.saveFail = SAVEFAIL[k]; });
 
 /* ---- 「むずかしい」モードのラベル（15言語） ---- */
 const HARD = {

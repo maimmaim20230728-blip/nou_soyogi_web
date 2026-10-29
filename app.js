@@ -32,6 +32,26 @@ function show(id){
   Bgm.setMood(id === 'game' ? 'game' : id === 'records' ? 'history' : 'title');  // ゲーム=軽快/記録=振り返り/その他=ポップ
 }
 
+/* ===== 読み上げソフトへの知らせ（index.html の #srLive・aria-live="polite"・見た目には出さない） =====
+   同じ文が続いても読まれるよう、いったん空にしてから入れる */
+function srSay(msg){
+  const el = document.getElementById('srLive'); if(!el) return;
+  el.textContent = '';
+  setTimeout(()=>{ el.textContent = msg || ''; }, 50);
+}
+
+/* button でない押す場所(カレンダーの日など)を、Tab で届き Enter/Space で押せるようにする。押すと click を出す＝Tap が拾う(2026-10-30) */
+function keyButton(el, label){
+  el.setAttribute('role', 'button');
+  el.setAttribute('tabindex', '0');
+  if(label) el.setAttribute('aria-label', label);
+  el.addEventListener('keydown', e=>{
+    if(e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    e.preventDefault();
+    el.click();
+  });
+}
+
 /* ===== 正誤フィードバック（大きな○×＋リング＋キラキラ＋音） ===== */
 const Feedback = {
   flash(ok, cb){
@@ -44,6 +64,7 @@ const Feedback = {
     }
     fb.innerHTML = html;
     fb.className = 'show ' + (ok ? 'ok' : 'ng');
+    srSay(t(ok ? 'srRight' : 'srWrong'));   // ○✕ を読み上げソフトにも伝える(2026-10-30)
     ok ? Sound.ok() : Sound.ng();
     // 正解は1.0秒。誤答は「まちがい」をしっかり見て気づけるよう1.8秒（シニアがゆっくり確認できる長さ）
     setTimeout(()=>{ fb.className = ''; if(cb) cb(); }, ok ? 1000 : 1800);
@@ -130,8 +151,14 @@ function quitTraining(){
 }
 
 function finishTraining(results, hard){
-  Store.record(results, hard ? 'hard' : 'usual');
+  const saved = !!Store.record(results, hard ? 'hard' : 'usual');
   renderResult(results);
+  if(!saved){                                   // 保存できなかったら(容量いっぱい・保存が使えない環境)その場で知らせる(2026-10-30)
+    const msg = document.createElement('div');
+    msg.className = 'save-fail'; msg.setAttribute('role', 'alert');
+    msg.textContent = t('saveFail');
+    document.getElementById('resultBody').prepend(msg);
+  }
   show('result');
 }
 
@@ -305,7 +332,14 @@ function renderRecords(){
       inner += '<div class="cal-badges">'+badges+'</div>';
     }
     cell.innerHTML = inner;
-    if(has) Tap.bind(cell, ()=>{ renderDayDetail(key); });
+    if(has){
+      Tap.bind(cell, ()=>{ renderDayDetail(key); });
+      // キーボード・スイッチでも押せるように。名前は「日付 いつもの 2 むずかしい 1」(2026-10-30)
+      let label = new Date(calY, calM, day).toLocaleDateString(CUR || undefined, { month:'long', day:'numeric', weekday:'short' });
+      if(c.usual>0) label += ' ' + t('usual') + ' ' + c.usual;
+      if(c.hard>0)  label += ' ' + t('hard') + ' ' + c.hard;
+      keyButton(cell, label);
+    }
     grid.appendChild(cell);
   }
 }

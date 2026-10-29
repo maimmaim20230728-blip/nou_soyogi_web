@@ -17,9 +17,13 @@ const Store = (() => {
     try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }
     catch(e){ return {}; }
   }
+  /* 保存できたら true。失敗(容量いっぱい・保存が使えない環境)は false＝既存は保持し、結果画面で知らせる */
   function save(obj){
-    try{ localStorage.setItem(KEY, JSON.stringify(obj)); }catch(e){ /* 保存失敗時も既存は保持 */ }
+    try{ localStorage.setItem(KEY, JSON.stringify(obj)); return true; }catch(e){ return false; }
   }
+  /* 設定の読み書き。保存が使えない環境(サイトデータのブロック等)でも起動を止めない(2026-10-30) */
+  function getItem(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function setItem(k, v){ try{ localStorage.setItem(k, v); return true; }catch(e){ return false; } }
   function keyOf(d){
     return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   }
@@ -27,7 +31,9 @@ const Store = (() => {
   return {
     keyOf,
 
-    /* 1回のトレーニング結果を今日の記録に追加 */
+    getItem, setItem,
+
+    /* 1回のトレーニング結果を今日の記録に追加。保存できなかったら null(呼び出し側で知らせる) */
     record(results, mode){
       const all = load();
       const day = keyOf(new Date());
@@ -39,8 +45,7 @@ const Store = (() => {
       results.forEach(r => games[r.game] = { c:r.correct, t:r.total });
       row.sessions.push({ mode: mode || 'usual', correct, total, games, at: Date.now() });
       all[day] = row;
-      save(all);
-      return row;
+      return save(all) ? row : null;
     },
 
     /* その日のデータ（無ければ null） */
@@ -97,12 +102,12 @@ const Store = (() => {
     },
 
     /* --- 設定 --- */
-    getLang(){ return localStorage.getItem('soyogi.lang') || ''; },
-    setLang(c){ localStorage.setItem('soyogi.lang', c); },
-    getScale(){ return localStorage.getItem('soyogi.scale') || 'M'; },
-    setScale(s){ localStorage.setItem('soyogi.scale', s); },
+    getLang(){ return getItem('soyogi.lang') || ''; },
+    setLang(c){ setItem('soyogi.lang', c); },
+    getScale(){ return getItem('soyogi.scale') || 'M'; },
+    setScale(s){ setItem('soyogi.scale', s); },
     /* かずタッチの まちがいの合図(失敗音・赤い光・✕)。既定=だす。'off' のときだけ出さない */
-    getMissCue(){ return localStorage.getItem('soyogi.missCue') !== 'off'; },
-    setMissCue(on){ localStorage.setItem('soyogi.missCue', on ? 'on' : 'off'); },
+    getMissCue(){ return getItem('soyogi.missCue') !== 'off'; },
+    setMissCue(on){ setItem('soyogi.missCue', on ? 'on' : 'off'); },
   };
 })();
