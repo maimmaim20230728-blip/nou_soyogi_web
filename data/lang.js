@@ -337,6 +337,19 @@ const NOREC = {
 };
 Object.keys(RECORDS).forEach(k=>{ if(LANG[k]){ LANG[k].ui.records=RECORDS[k]; LANG[k].ui.playDays=PLAYDAYS[k]; LANG[k].ui.noRecord=NOREC[k]; } });
 
+/* ---- カレンダーの月送りボタン(◀ ▶)の読み上げ名（15言語・2026-11-11） ---- */
+const PREVMONTH = {
+  ja:'前の月', en:'Previous month', zh:'上个月', 'zh-TW':'上個月', ko:'이전 달',
+  es:'Mes anterior', pt:'Mês anterior', fr:'Mois précédent', de:'Vorheriger Monat', it:'Mese precedente',
+  nl:'Vorige maand', pl:'Poprzedni miesiąc', ru:'Предыдущий месяц', tr:'Önceki ay', hi:'पिछला महीना',
+};
+const NEXTMONTH = {
+  ja:'次の月', en:'Next month', zh:'下个月', 'zh-TW':'下個月', ko:'다음 달',
+  es:'Mes siguiente', pt:'Próximo mês', fr:'Mois suivant', de:'Nächster Monat', it:'Mese successivo',
+  nl:'Volgende maand', pl:'Następny miesiąc', ru:'Следующий месяц', tr:'Sonraki ay', hi:'अगला महीना',
+};
+Object.keys(LANG).forEach(k=>{ LANG[k].ui.prevMonth = PREVMONTH[k]; LANG[k].ui.nextMonth = NEXTMONTH[k]; });
+
 /* ---- プレイ回数ラベルと単位（日／回）。単位はCJK/韓のみ表示、他は空（見出しで足りる） ---- */
 const PLAYCOUNT = {
   ja:'プレイ回数', en:'Times played', zh:'游玩次数', 'zh-TW':'遊玩次數', ko:'플레이 횟수',

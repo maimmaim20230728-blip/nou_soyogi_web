@@ -22,6 +22,10 @@ function applyI18n(){
   I18N = LANG[CUR];
   document.documentElement.lang = CUR;
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  // カレンダーの月送り(◀ ▶)は記号だけなので、読み上げ名を訳で入れる(2026-11-11)
+  const cp = document.getElementById('calPrev'), cn = document.getElementById('calNext');
+  if(cp) cp.setAttribute('aria-label', t('prevMonth'));
+  if(cn) cn.setAttribute('aria-label', t('nextMonth'));
 }
 
 /* ===== 画面切り替え ===== */
