@@ -74,6 +74,7 @@
       <button class="size-btn" data-s="M">A</button>
       <button class="size-btn" data-s="L">A</button>
       <button class="size-btn" data-s="XL">A</button>
+      <button class="size-btn" data-s="XXL">A</button>
     </div>
     <div class="set-label" data-i18n="sound">おと</div>
     <button id="soundBtn" class="sound-btn">🔊</button>
@@ -84,6 +85,19 @@
       <button class="cue-btn" data-cue="on" data-i18n="cueOn">だす</button>
       <button class="cue-btn" data-cue="off" data-i18n="cueOff">ださない</button>
     </div>
+    <!-- くっきり ひょうじ（白地に黒・濃い縁・2026-11-11） -->
+    <div class="set-label" data-i18n="hcLabel">くっきり ひょうじ（白と黒）</div>
+    <div id="hcRow" class="cue-row">
+      <button class="cue-btn" data-hc="on" data-i18n="hcOn">する</button>
+      <button class="cue-btn" data-hc="off" data-i18n="hcOff">しない</button>
+    </div>
+    <!-- かずタッチの かず（3 / いつもの5・むずかしい8 / 12・2026-11-11） -->
+    <div class="set-label" data-i18n="numRange">かずタッチの かず（1から いくつまで）</div>
+    <div id="rangeRow" class="cue-row">
+      <button class="cue-btn" data-r="easy">3</button>
+      <button class="cue-btn" data-r="normal">5 / 8</button>
+      <button class="cue-btn" data-r="long">12</button>
+    </div>
     <!-- はじめての あそびかた を もう一度（app.js openGuide・2026-09-30） -->
     <div class="set-label" data-i18n="guideTitle">あそびかた</div>
     <button id="btnGuide" class="guide-again-btn" data-i18n="guideAgain">あそびかたを もういちど みる</button>
@@ -92,6 +106,7 @@
 
   <!-- ========== 記録（カレンダー） ========== -->
   <section id="records" class="screen records">
+    <div id="weekSummary" class="week-summary" hidden></div>
     <div class="cal-head">
       <button id="calPrev" class="cal-nav">◀</button>
       <div id="calMonth" class="cal-month"></div>

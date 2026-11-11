@@ -182,6 +182,7 @@ function renderResult(results){
     '<div class="result-list">' +
       results.map(r=>'<div class="rrow"><span>'+gname[r.game]+'</span><span>'+r.correct+' / '+r.total+'</span></div>').join('') +
     '</div>' +
+    bestGameHtml(results, gname) +
     '<div class="streak">🔥 '+Store.streak()+'</div>';
 
   // 数字を 0 から実際の正解数まで数え上げる
@@ -194,6 +195,18 @@ function renderResult(results){
   }
   makeConfetti(el, stars>=2);
   Sound.fanfare();
+}
+
+/* 今日いちばん よくできたゲームに ひとこと(2026-11-11)。苦手は言わない。
+   ・正解が6割以上のゲームだけ / 全部が同じ成績なら「いちばん」がないので出さない / 同点は順番が先のゲーム */
+function bestGameHtml(results, gname){
+  const cand = results.filter(r => r.total > 0);
+  if(cand.length < 2) return '';
+  const ratio = r => r.correct / r.total;
+  const best = Math.max.apply(null, cand.map(ratio));
+  const top = cand.filter(r => ratio(r) === best);
+  if(best < 0.6 || top.length === cand.length) return '';
+  return '<div class="best-game">' + t('bestGame').replace('{g}', gname[top[0].game]) + '</div>';
 }
 
 /* 紙吹雪（星2つ以上で盛大に） */
@@ -215,8 +228,12 @@ function makeConfetti(parent, big){
 /* ===== 設定画面 ===== */
 function setScale(s){
   Store.setScale(s);
-  document.body.classList.remove('scale-M','scale-L','scale-XL');
+  document.body.classList.remove('scale-M','scale-L','scale-XL','scale-XXL');
   document.body.classList.add('scale-'+s);
+}
+/* くっきり ひょうじ(白地に黒・濃い縁)。body.hc で CSS が切り替わる。ストループの黄色は濃い黄になる(2026-11-11) */
+function setContrastClass(on){
+  document.body.classList.toggle('hc', !!on);
 }
 /* 設定画面の「静的ボタン」(大きさ・おと・おんがく)は初期化時に一度だけバインドする。
    ・これらは常にHTMLに存在する固定要素。renderSettingsは開くたび走るので、そこで毎回
@@ -234,6 +251,12 @@ function bindSettingsStatic(){
   document.querySelectorAll('#cueRow .cue-btn').forEach(b=>{
     Tap.bind(b, ()=>{ Store.setMissCue(b.dataset.cue === 'on'); reflectSettings(); });
   });
+  document.querySelectorAll('#hcRow .cue-btn').forEach(b=>{
+    Tap.bind(b, ()=>{ const on = b.dataset.hc === 'on'; Store.setContrast(on); setContrastClass(on); reflectSettings(); });
+  });
+  document.querySelectorAll('#rangeRow .cue-btn').forEach(b=>{
+    Tap.bind(b, ()=>{ Store.setNumRange(b.dataset.r); reflectSettings(); });
+  });
 }
 
 /* 設定画面の状態反映のみ（大きさの選択・音/BGMのアイコン）。バインドはしない＝何度呼んでも安全 */
@@ -246,6 +269,14 @@ function reflectSettings(){
   const cue = Store.getMissCue();
   document.querySelectorAll('#cueRow .cue-btn').forEach(b=>{
     b.classList.toggle('sel', (b.dataset.cue === 'on') === cue);
+  });
+  const hc = Store.getContrast();
+  document.querySelectorAll('#hcRow .cue-btn').forEach(b=>{
+    b.classList.toggle('sel', (b.dataset.hc === 'on') === hc);
+  });
+  const nr = Store.getNumRange();
+  document.querySelectorAll('#rangeRow .cue-btn').forEach(b=>{
+    b.classList.toggle('sel', b.dataset.r === nr);
   });
 }
 
@@ -289,8 +320,19 @@ function renderHome(){
 /* ===== 記録（カレンダー） ===== */
 let calY, calM;   // 表示中の年・月(0-based)
 
+/* 「この1週間」のまとめ(2026-11-11)。あそんだ日が0なら出さない。前の7日より増えたときだけ「ふえました」を足す(減ったときは何も言わない) */
+function renderWeekSummary(){
+  const el = document.getElementById('weekSummary'); if(!el) return;
+  const w = Store.weekDays();
+  if(w.now <= 0){ el.innerHTML = ''; el.hidden = true; return; }
+  let html = '<div>' + t('weekDays').replace('{n}', w.now) + '</div>';
+  if(w.now > w.before) html += '<div class="ws-more">' + t('weekMore').replace('{n}', w.now - w.before) + '</div>';
+  el.innerHTML = html; el.hidden = false;
+}
+
 function openRecords(){
   const d = new Date(); calY = d.getFullYear(); calM = d.getMonth();
+  renderWeekSummary();
   renderRecords();
   document.getElementById('dayDetail').innerHTML = '';
   show('records');
@@ -508,6 +550,7 @@ function openGuide(first){
 /* ===== 起動 ===== */
 function init(){
   setScale(Store.getScale());
+  setContrastClass(Store.getContrast());
   applyI18n();
   renderHome();
   watchBack();            // Android の戻るボタン（Play版だけ）

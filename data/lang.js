@@ -732,3 +732,50 @@ Object.keys(LANG).forEach(k=>{
   LANG[k].ui.guideTitle = GUIDE[k].title;   // せっていの見出し
   LANG[k].ui.guideAgain = GUIDE[k].again;   // せっていのボタン
 });
+
+/* ---- v1.15 追加の文言（15言語・2026-11-11）
+   weekDays/weekMore=記録画面の「この1週間」 / bestGame=結果画面のひとこと / moneyChoice=おかね問題の選択肢の読み上げ
+   hcLabel/hcOn/hcOff=せっていの「くっきり ひょうじ」(する/しない は cueOn/cueOff と同じ言い方) / numRange=せっていの「かずタッチの かず」 ---- */
+const V115 = {
+  weekDays:{
+    ja:'この1週間で {n}日 あそびました', en:'Days played in the last 7 days: {n}', zh:'最近7天玩了 {n} 天', 'zh-TW':'最近7天玩了 {n} 天', ko:'최근 7일 동안 {n}일 했어요',
+    es:'Días jugados en los últimos 7 días: {n}', pt:'Dias jogados nos últimos 7 dias: {n}', fr:'Jours joués ces 7 derniers jours : {n}', de:'Gespielte Tage in den letzten 7 Tagen: {n}', it:'Giorni giocati negli ultimi 7 giorni: {n}',
+    nl:'Gespeelde dagen in de laatste 7 dagen: {n}', pl:'Dni gry w ostatnich 7 dniach: {n}', ru:'Дней игры за последние 7 дней: {n}', tr:'Son 7 günde oynanan gün: {n}', hi:'पिछले 7 दिनों में खेले दिन: {n}',
+  },
+  weekMore:{
+    ja:'その前の1週間より {n}日 ふえました', en:'{n} more than the 7 days before', zh:'比前7天多了 {n} 天', 'zh-TW':'比前7天多了 {n} 天', ko:'그 전 7일보다 {n}일 늘었어요',
+    es:'{n} más que los 7 días anteriores', pt:'{n} a mais que nos 7 dias anteriores', fr:'{n} de plus que les 7 jours précédents', de:'{n} mehr als in den 7 Tagen davor', it:'{n} in più rispetto ai 7 giorni precedenti',
+    nl:'{n} meer dan in de 7 dagen ervoor', pl:'O {n} więcej niż w poprzednich 7 dniach', ru:'На {n} больше, чем за предыдущие 7 дней', tr:'Önceki 7 güne göre {n} fazla', hi:'उससे पहले के 7 दिनों से {n} ज़्यादा',
+  },
+  bestGame:{
+    ja:'きょうは {g}が よくできました', en:'Today you did well on: {g}', zh:'今天「{g}」做得很好', 'zh-TW':'今天「{g}」做得很好', ko:'오늘 잘한 게임: {g}',
+    es:'Hoy te fue bien en: {g}', pt:'Hoje você foi bem em: {g}', fr:'Bien réussi aujourd’hui : {g}', de:'Heute gut gelungen: {g}', it:'Oggi è andata bene: {g}',
+    nl:'Vandaag goed gedaan: {g}', pl:'Dziś dobrze poszło: {g}', ru:'Сегодня хорошо получилось: {g}', tr:'Bugün iyi gitti: {g}', hi:'आज अच्छा रहा: {g}',
+  },
+  moneyChoice:{
+    ja:'{n}えん', en:'{n} coins', zh:'{n}枚金币', 'zh-TW':'{n}枚金幣', ko:'{n}코인',
+    es:'{n} monedas', pt:'{n} moedas', fr:'{n} pièces', de:'{n} Münzen', it:'{n} monete',
+    nl:'{n} munten', pl:'{n} monet', ru:'{n} монет', tr:'{n} coin', hi:'{n} सिक्के',
+  },
+  hcLabel:{
+    ja:'くっきり ひょうじ（白と黒）', en:'High contrast', zh:'高对比度', 'zh-TW':'高對比', ko:'선명하게 보기',
+    es:'Alto contraste', pt:'Alto contraste', fr:'Contraste élevé', de:'Hoher Kontrast', it:'Alto contrasto',
+    nl:'Hoog contrast', pl:'Wysoki kontrast', ru:'Высокая контрастность', tr:'Yüksek kontrast', hi:'ज़्यादा कंट्रास्ट',
+  },
+  hcOn:{
+    ja:'する', en:'On', zh:'开', 'zh-TW':'開', ko:'켜기',
+    es:'Sí', pt:'Sim', fr:'Oui', de:'An', it:'Sì',
+    nl:'Aan', pl:'Tak', ru:'Да', tr:'Açık', hi:'चालू',
+  },
+  hcOff:{
+    ja:'しない', en:'Off', zh:'关', 'zh-TW':'關', ko:'끄기',
+    es:'No', pt:'Não', fr:'Non', de:'Aus', it:'No',
+    nl:'Uit', pl:'Nie', ru:'Нет', tr:'Kapalı', hi:'बंद',
+  },
+  numRange:{
+    ja:'かずタッチの かず（1から いくつまで）', en:'Tap 1-2-3: highest number', zh:'数字点点：最大数字', 'zh-TW':'數字點點：最大數字', ko:'숫자 터치: 가장 큰 숫자',
+    es:'Toca 1-2-3: número más alto', pt:'Toque 1-2-3: maior número', fr:'Touche 1-2-3 : plus grand nombre', de:'Tipp 1-2-3: höchste Zahl', it:'Tocca 1-2-3: numero più alto',
+    nl:'Tik 1-2-3: hoogste getal', pl:'Dotknij 1-2-3: największa liczba', ru:'Нажми 1-2-3: наибольшее число', tr:'Dokun 1-2-3: en büyük sayı', hi:'1-2-3 छुएँ: सबसे बड़ी संख्या',
+  },
+};
+Object.keys(V115).forEach(key=>{ Object.keys(LANG).forEach(k=>{ LANG[k].ui[key] = V115[key][k]; }); });

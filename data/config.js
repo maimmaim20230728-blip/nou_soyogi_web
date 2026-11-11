@@ -28,7 +28,7 @@ const LANGS = [
 const COLORS = [
   { id:'red',    hex:'#E53935', text:'#D32F2F' },
   { id:'blue',   hex:'#1E88E5', text:'#1565C0' },
-  { id:'yellow', hex:'#FDD835', text:'#F9A825' },
+  { id:'yellow', hex:'#FDD835', text:'#F9A825', hcHex:'#8A6D00' },   /* hcHex=くっきり ひょうじ(白地)のときの濃い黄 */
   { id:'green',  hex:'#43A047', text:'#2E7D32' },
   { id:'black',  hex:'#212121', text:'#212121' },
   { id:'purple', hex:'#8E24AA', text:'#7B1FA2' },

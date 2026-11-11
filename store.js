@@ -101,13 +101,32 @@ const Store = (() => {
       return n;
     },
 
+    /* この1週間(今日をふくむ7日)と、その前の7日に「あそんだ日」の数(記録画面の「この1週間」用・2026-11-11) */
+    weekDays(){
+      const all = load();
+      const has = d => { const r = all[keyOf(d)]; return !!(r && r.sessions && r.sessions.length); };
+      let now = 0, before = 0;
+      const d = new Date();
+      for(let i=0;i<14;i++){
+        if(has(d)){ if(i < 7) now++; else before++; }
+        d.setDate(d.getDate()-1);
+      }
+      return { now, before };
+    },
+
     /* --- 設定 --- */
     getLang(){ return getItem('soyogi.lang') || ''; },
     setLang(c){ setItem('soyogi.lang', c); },
-    getScale(){ return getItem('soyogi.scale') || 'M'; },
+    getScale(){ const s = getItem('soyogi.scale'); return (s==='L'||s==='XL'||s==='XXL') ? s : 'M'; },
     setScale(s){ setItem('soyogi.scale', s); },
     /* かずタッチの まちがいの合図(失敗音・赤い光・✕)。既定=だす。'off' のときだけ出さない */
     getMissCue(){ return getItem('soyogi.missCue') !== 'off'; },
     setMissCue(on){ setItem('soyogi.missCue', on ? 'on' : 'off'); },
+    /* くっきり ひょうじ(白地に黒・濃い縁)。既定=しない。'on' のときだけ(2026-11-11) */
+    getContrast(){ return getItem('soyogi.contrast') === 'on'; },
+    setContrast(on){ setItem('soyogi.contrast', on ? 'on' : 'off'); },
+    /* かずタッチの かず。'easy'=1〜3 / 'normal'=今までどおり(いつもの5・むずかしい8) / 'long'=1〜12。既定=normal(2026-11-11) */
+    getNumRange(){ const r = getItem('soyogi.numRange'); return (r==='easy'||r==='long') ? r : 'normal'; },
+    setNumRange(r){ setItem('soyogi.numRange', (r==='easy'||r==='long') ? r : 'normal'); },
   };
 })();

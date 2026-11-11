@@ -27,6 +27,7 @@ body{
 body.scale-M { font-size:clamp(20px,5.2vw,30px); }
 body.scale-L { font-size:clamp(23px,6.0vw,34px); }
 body.scale-XL{ font-size:clamp(26px,6.8vw,40px); }
+body.scale-XXL{ font-size:clamp(30px,8vw,46px); }   /* 特大+（弱視・高齢の方向け・2026-11-11） */
 
 /* ---- 画面 ---- */
 /* targetSdk36(Android15+)はエッジtoエッジ強制＝WebViewがステータスバー/ナビゲーションバーの
@@ -164,16 +165,17 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 .lang-btn{ min-height:64px; border:3px solid var(--line); border-radius:14px;
   background:var(--surface); color:var(--text); font-size:.72em; font-weight:700; cursor:pointer; }
 .lang-btn.sel{ border-color:var(--brand); background:var(--tap); }
-.size-row{ display:flex; gap:12px; align-items:flex-end; }
+/* 4つ（特大+ を足した・2026-11-11）: 幅は最低66px・大きい「A」が入らないときだけ広がる。せまい画面では折り返す */
+.size-row{ display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; justify-content:center; }
 .size-btn{ background:var(--surface); border:3px solid var(--line); border-radius:14px;
-  width:72px; min-height:72px; font-weight:800; cursor:pointer; color:var(--text); }
+  min-width:66px; min-height:72px; padding:0 6px; font-weight:800; cursor:pointer; color:var(--text); }
 .size-btn:nth-child(1){ font-size:1.1em; } .size-btn:nth-child(2){ font-size:1.5em; }
-.size-btn:nth-child(3){ font-size:1.9em; }
+.size-btn:nth-child(3){ font-size:1.9em; } .size-btn:nth-child(4){ font-size:2.4em; }
 .size-btn.sel{ border-color:var(--brand); background:var(--tap); }
 .sound-btn{ font-size:2em; width:96px; min-height:76px; border:3px solid var(--line);
   border-radius:16px; background:var(--surface); cursor:pointer; }
 /* かずタッチの まちがいの合図 だす/ださない（見出しは長い言語でも折り返して中央に） */
-.set-label[data-i18n="missCue"]{ text-align:center; max-width:540px; }
+.set-label[data-i18n="missCue"],.set-label[data-i18n="hcLabel"],.set-label[data-i18n="numRange"]{ text-align:center; max-width:540px; }
 .cue-row{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
 .cue-btn{ background:var(--surface); border:3px solid var(--line); border-radius:14px;
   min-width:120px; min-height:72px; padding:0 18px; font-size:1em; font-weight:800;
@@ -234,8 +236,9 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 .menu-btn:active,.menu-btn.pressing,.obj-choice:active,.obj-choice.pressing,.choice:active,.choice.pressing,.swatch:active,.swatch.pressing{ transform:scale(.97); }
 
 /* クレジット（HPリンク・タイトル画面） */
-.credit{ display:inline-block; margin-top:22px; max-width:92%; font-size:.62em; line-height:1.5;
-  color:var(--brand-dark); text-decoration:underline; text-align:center; }
+/* 「記録を見る」から離して押し間違いを防ぎ、色も濃く太くしてはっきりさせる(2026-11-11・上の余白は 44px＝ヒロさんの決定 44〜50px の中) */
+.credit{ display:inline-block; margin-top:44px; max-width:92%; font-size:.62em; line-height:1.5;
+  color:#0B3D0E; font-weight:700; text-decoration:underline; text-align:center; }
 .credit:active,.credit.pressing{ opacity:.6; }
 
 /* 「動きを減らす」設定を尊重（強い動きを止める） */
@@ -406,3 +409,27 @@ html[lang="ja"] .guide-h, html[lang="ja"] .guide-p, html[lang="ko"] .guide-h, ht
 .save-fail{ color:var(--wrong); font-weight:800; border:3px solid var(--wrong); border-radius:14px; padding:10px 14px; margin:0 auto 12px; max-width:540px; background:var(--surface); }
 /* カレンダーの日をキーボードで選んだとき */
 .cal-cell:focus-visible{ outline:4px solid var(--brand); outline-offset:2px; }
+
+/* ===================== v1.15（2026-11-11） ===================== */
+/* 記録画面の「この1週間」・結果画面の「いちばん よくできた」ひとこと */
+.week-summary{ width:100%; max-width:640px; margin:0 auto 12px; padding:10px 14px; text-align:center;
+  font-size:.95em; font-weight:800; color:var(--brand-dark); background:var(--surface);
+  border:2px solid var(--line); border-radius:14px; line-height:1.45; }
+.week-summary[hidden]{ display:none; }
+.week-summary .ws-more{ font-size:.9em; color:var(--accent-dark); margin-top:2px; }
+.best-game{ font-size:1.05em; font-weight:800; color:var(--brand-dark); margin:0 auto 14px; max-width:420px; line-height:1.45; }
+
+/* くっきり ひょうじ（白地に黒・濃い縁）。せっていで「する」にすると body.hc が付く */
+body.hc{ --bg:#FFFFFF; --surface:#FFFFFF; --text:#000000; --brand:#0B3D0E; --brand-dark:#052A07;
+  --accent:#A84300; --accent-dark:#6B2A00; --correct:#0B5D12; --wrong:#B00020; --tap:#E6E6E6; --line:#000000; }
+body.hc .tagline, body.hc .home-info, body.hc .home-streak, body.hc .st-cap, body.hc .link-back,
+body.hc .g-count, body.hc .g-instruct, body.hc .set-label, body.hc .cal-wd, body.hc .cal-num,
+body.hc .cal-legend, body.hc .dd-none, body.hc .dd-time, body.hc .dd-g, body.hc .guide-step,
+body.hc .gear .gear-label, body.hc .gear .gear-ico, body.hc .quit-x, body.hc .week-summary .ws-more,
+body.hc .credit{ color:#000; }
+body.hc .choice, body.hc .menu-btn, body.hc .obj-choice, body.hc .num-btn, body.hc .size-btn,
+body.hc .cue-btn, body.hc .lang-btn, body.hc .sound-btn, body.hc .guide-again-btn, body.hc .cal-nav,
+body.hc .cal-cell.has, body.hc .dd-row, body.hc .week-summary, body.hc .quit-x, body.hc .guide-prev{ border-color:#000; border-width:4px; }
+body.hc .size-btn.sel, body.hc .cue-btn.sel, body.hc .lang-btn.sel{ background:#000; color:#fff; border-color:#000; }
+body.hc .swatch{ border-color:#000; }
+body.hc .stroop-word{ text-shadow:none; }

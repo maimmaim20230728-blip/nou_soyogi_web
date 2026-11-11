@@ -23,9 +23,12 @@ const StroopGame = {
     while(opt.size < nChoices) opt.add(pick(COLORS).id);
     const choices = [...opt].sort(()=>Math.random()-0.5);
 
+    // くっきり ひょうじ(白地)のときは、黄色を濃い黄にする(文字も選ぶ札も同じ色＝見分け方は変わらない・2026-11-11)
+    const hc = Store.getContrast();
+    const hexOf = c => (hc && c.hcHex) ? c.hcHex : c.hex;
     const word = (I18N.colors[wordC.id] || wordC.id);
     ctx.body.innerHTML =
-      '<div class="stroop-word" style="color:'+ink.hex+'">'+word+'</div>' +
+      '<div class="stroop-word" style="color:'+hexOf(ink)+'">'+word+'</div>' +
       '<div class="grid2" id="stroopChoices"></div>';
     const box = ctx.body.querySelector('#stroopChoices');
     let locked = false;
@@ -33,8 +36,8 @@ const StroopGame = {
       const c = byId(id);
       const btn = document.createElement('button');
       btn.className = 'swatch';
-      btn.style.background = c.hex;
-      btn.style.color = (id==='yellow') ? '#212121' : '#fff';
+      btn.style.background = hexOf(c);
+      btn.style.color = (id==='yellow' && !(hc && c.hcHex)) ? '#212121' : '#fff';   // 濃い黄の札は白い文字
       btn.textContent = (I18N.colors[id] || id);
       btn.dataset.id = id;
       Tap.bind(btn, ()=>{

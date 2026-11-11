@@ -11,6 +11,7 @@ const CalcGame = {
     const rnd = n => 1 + Math.floor(Math.random()*n);
 
     let answer, qHtml, choices;
+    let moneyText = '';                        // おかね問題の文(読み上げソフトに一度だけ伝える・選択肢は「◯◯えん」と読ませる・2026-11-11)
 
     if(Math.random() < 0.25){                 // ===== おかね（お釣り）問題 =====
       let pay, price;
@@ -26,6 +27,7 @@ const CalcGame = {
       const q = (I18N.ui.moneyQ || '{price} / {pay}')
         .replace('{price}', price).replace('{pay}', pay);
       qHtml = '<div class="calc-q money">'+q+'</div>';
+      moneyText = q;
 
       // 選択肢：正解＋10きざみのもっともらしい誤答（0超〜pay・負や重複なし）
       const set = new Set([answer]);
@@ -75,11 +77,13 @@ const CalcGame = {
       qHtml +
       '<div class="grid2" id="calcChoices"></div>';
     const box = ctx.body.querySelector('#calcChoices');
+    if(moneyText) srSay(moneyText);            // 問題文を読み上げソフトに一度だけ伝える(#srLive・見た目は変えない)
     let locked = false;
     choices.forEach(n=>{
       const btn = document.createElement('button');
       btn.className = 'choice';
       btn.textContent = n;
+      if(moneyText) btn.setAttribute('aria-label', t('moneyChoice').replace('{n}', n));   // 数字だけでなく「◯◯えん」と読ませる
       Tap.bind(btn, ()=>{
         if(locked) return; locked = true;
         const ok = (n === answer);

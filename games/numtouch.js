@@ -1,6 +1,6 @@
 /* ⑤ かずタッチ（トレイルメイキング：注意力・処理速度）
    ・round(ctx, opts, done) = 1ラウンド出題（1から順に全部タップしたら終了）
-   ・通常=1〜5 / opts.hard=1〜8。数字ボタンは重ならないようランダム配置
+   ・通常=1〜5 / opts.hard=1〜8(せっていで 1〜3 / 1〜12 にもできる・2026-11-11)。数字ボタンは重ならないようランダム配置
    ・正しい順＝緑にして無効化＋正解音／間違い＝赤フラッシュ＋不正解音でミス記録
    ・ミス0なら正解、1以上なら不正解として done(ok) で返す（他ゲームと同じ形式）
    ・せっていで まちがいの合図を「ださない」にすると(Store.getMissCue()=false)、
@@ -11,7 +11,9 @@ const NumTouchGame = {
   round(ctx, opts, done){
     ctx.instruct(t('tapNumber'));
     const hard = !!opts.hard;
-    const n = hard ? 8 : 5;
+    // せっていの「かずタッチの かず」: easy=1〜3 / long=1〜12 / normal=今までどおり(いつもの5・むずかしい8)
+    const range = Store.getNumRange();
+    const n = range === 'easy' ? 3 : range === 'long' ? 12 : (hard ? 8 : 5);
     const shuf = a => { a=a.slice();
       for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
       return a; };
