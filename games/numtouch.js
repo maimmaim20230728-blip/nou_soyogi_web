@@ -60,6 +60,7 @@ const NumTouchGame = {
       const b = document.createElement('button');
       b.className = 'num-btn';
       b.textContent = num;
+      if(num >= 10){ b.classList.add('two'); if(b.style.setProperty) b.style.setProperty('--nb-inner', (size-8)+'px'); }   // 2けたは字を縮めて縁の内側に収める(内側=size-縁4px×2)
       b.dataset.num = num;
       b.style.left = Math.round(left)+'px';
       b.style.top  = Math.round(top)+'px';

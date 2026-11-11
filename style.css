@@ -68,13 +68,13 @@ body.scale-XXL{ font-size:clamp(30px,8vw,46px); }   /* 特大+（弱視・高齢
    safe center=画面が低く本体がはみ出す時は上寄せに退避し、上端が歯車の裏に潜らない。 */
 #home{ padding-top:calc(env(safe-area-inset-top, 0px) + 120px); justify-content:safe center; }
 .logo{ font-size:2.1em; font-weight:900; color:var(--brand-dark); margin-bottom:6px; }
-.tagline{ font-size:.9em; color:#555; margin-bottom:44px; }
+.tagline{ font-size:.9em; color:#555; margin-bottom:24px; }
 .start{ min-height:170px; font-size:1.45em; background:var(--accent);
   box-shadow:0 8px 0 var(--accent-dark); }
 .start:active,.start.pressing{ box-shadow:0 2px 0 var(--accent-dark); }
-.home-info{ margin-top:26px; color:#666; }
+.home-info{ margin-top:14px; color:#666; }
 .home-date{ font-size:1.3em; font-weight:800; color:var(--brand-dark); line-height:1.35; }
-.home-streak{ font-size:.85em; color:#666; margin-top:8px; }
+.home-streak{ font-size:.85em; color:#666; margin-top:4px; }
 
 /* ========== モード選択 ========== */
 .mode-usual{ min-height:170px; font-size:1.5em; background:var(--accent);
@@ -255,7 +255,7 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 .st-val{ display:flex; align-items:baseline; }
 .st-val b{ font-size:1.9em; font-weight:900; color:var(--brand-dark); line-height:1; }
 .st-val i{ font-style:normal; font-size:.85em; font-weight:800; color:var(--brand-dark); margin-left:3px; }
-.records-btn{ margin-top:22px; min-height:64px; padding:12px 30px; font-size:1.05em; font-weight:800;
+.records-btn{ margin-top:12px; min-height:64px; padding:12px 30px; font-size:1.05em; font-weight:800;
   color:#fff; background:var(--brand); border:none; border-radius:18px;
   box-shadow:0 5px 0 var(--brand-dark); cursor:pointer; }
 .records-btn:active,.records-btn.pressing{ transform:translateY(3px); box-shadow:0 2px 0 var(--brand-dark); }
@@ -319,6 +319,8 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
   font-size:2.2em; font-weight:900; line-height:1; cursor:pointer;
   display:flex; align-items:center; justify-content:center; box-shadow:0 4px 0 var(--line); }
 .num-btn:active,.num-btn.pressing{ transform:translateY(2px); box-shadow:0 2px 0 var(--line); }
+/* 2けたの数(10〜12)だけ字を縮め、丸い縁の内側に余白を持って収める。内側の幅は JS が --nb-inner(px)で渡す。1けたは変えない */
+.num-btn.two{ font-size:min(2.2em, calc(var(--nb-inner, 72px) * .62)); }
 .num-btn.done{ background:var(--correct); color:#fff; border-color:var(--correct);
   box-shadow:none; transform:none; }              /* 正しい順＝緑にして無効化 */
 .num-btn.wrong{ animation:numWrong .4s; }         /* 間違い＝赤くフラッシュ＋ゆれ */
