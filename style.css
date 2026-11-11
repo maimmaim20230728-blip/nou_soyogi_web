@@ -68,11 +68,11 @@ body.scale-XXL{ font-size:clamp(30px,8vw,46px); }   /* 特大+（弱視・高齢
    safe center=画面が低く本体がはみ出す時は上寄せに退避し、上端が歯車の裏に潜らない。 */
 #home{ padding-top:calc(env(safe-area-inset-top, 0px) + 120px); justify-content:safe center; }
 .logo{ font-size:2.1em; font-weight:900; color:var(--brand-dark); margin-bottom:6px; }
-.tagline{ font-size:.9em; color:#555; margin-bottom:24px; }
+.tagline{ font-size:.9em; color:#555; margin-bottom:14px; }
 .start{ min-height:170px; font-size:1.45em; background:var(--accent);
   box-shadow:0 8px 0 var(--accent-dark); }
 .start:active,.start.pressing{ box-shadow:0 2px 0 var(--accent-dark); }
-.home-info{ margin-top:14px; color:#666; }
+.home-info{ margin-top:10px; color:#666; }
 .home-date{ font-size:1.3em; font-weight:800; color:var(--brand-dark); line-height:1.35; }
 .home-streak{ font-size:.85em; color:#666; margin-top:4px; }
 
@@ -236,8 +236,8 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 .menu-btn:active,.menu-btn.pressing,.obj-choice:active,.obj-choice.pressing,.choice:active,.choice.pressing,.swatch:active,.swatch.pressing{ transform:scale(.97); }
 
 /* クレジット（HPリンク・タイトル画面） */
-/* 「記録を見る」から離して押し間違いを防ぎ、色も濃く太くしてはっきりさせる(2026-11-11・上の余白は 44px＝ヒロさんの決定 44〜50px の中) */
-.credit{ display:inline-block; margin-top:44px; max-width:92%; font-size:.62em; line-height:1.5;
+/* 「記録を見る」から離して押し間違いを防ぎ、色も濃く太くしてはっきりさせる(2026-11-11・上の余白は 28px＝ボタンの影5pxを引いても23pxあく。44pxだと日付2行+🔥+クレジット2行で最初の画面(432×768)からはみ出すため、ホームの他の間隔と合わせて詰めた) */
+.credit{ display:inline-block; margin-top:28px; max-width:92%; font-size:.62em; line-height:1.5;
   color:#0B3D0E; font-weight:700; text-decoration:underline; text-align:center; }
 .credit:active,.credit.pressing{ opacity:.6; }
 
@@ -249,13 +249,13 @@ img.art{ width:8rem; height:8rem; object-fit:contain; }
 
 /* ===================== ホーム：プレイ日数・記録ボタン ===================== */
 /* プレイ日数（日）＋プレイ回数（回）を横並びで一目に */
-.home-stats{ margin-top:14px; display:flex; gap:30px; justify-content:center; }
+.home-stats{ margin-top:8px; display:flex; gap:30px; justify-content:center; }
 .stat{ display:flex; flex-direction:column; align-items:center; gap:3px; }
 .st-cap{ font-size:.72em; color:#666; }
 .st-val{ display:flex; align-items:baseline; }
 .st-val b{ font-size:1.9em; font-weight:900; color:var(--brand-dark); line-height:1; }
 .st-val i{ font-style:normal; font-size:.85em; font-weight:800; color:var(--brand-dark); margin-left:3px; }
-.records-btn{ margin-top:12px; min-height:64px; padding:12px 30px; font-size:1.05em; font-weight:800;
+.records-btn{ margin-top:8px; min-height:64px; padding:12px 30px; font-size:1.05em; font-weight:800;
   color:#fff; background:var(--brand); border:none; border-radius:18px;
   box-shadow:0 5px 0 var(--brand-dark); cursor:pointer; }
 .records-btn:active,.records-btn.pressing{ transform:translateY(3px); box-shadow:0 2px 0 var(--brand-dark); }
